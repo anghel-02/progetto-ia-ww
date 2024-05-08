@@ -44,7 +44,7 @@ public class MatrixGame {
         MatrixGame display = new MatrixGame();
 
 
-        // Simulazione movimento
+        // Simulazione 2 giocatori
         display.updateGrid(2, 2);
         display.updateGrid(3, 3);
 
