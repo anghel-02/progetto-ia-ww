@@ -1,5 +1,7 @@
-package org.example;
+package main.java.org.example;
 
+
+import main.java.org.example.EmbAsp.MyHandler;
 
 public class MatrixGame {
     private static final int GRID_SIZE = 5;
@@ -50,5 +52,7 @@ public class MatrixGame {
 
         display.displayGrid();
 
+        //Prova se funziona MyHandler
+        MyHandler handler = new MyHandler();
     }
 }
