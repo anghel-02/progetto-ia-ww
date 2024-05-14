@@ -66,16 +66,6 @@ public class Matrix {
         String newCasella = grid[nextX][nextY];
         String oldCasella = grid[currentX][currentY];
 
-        System.out.println("player code = "+playerCode);
-        System.out.println("input coord = "+coord);
-        System.out.println("convert: 0 = " + playerCurrentPosition[0]+ " | 1 = " + playerCurrentPosition[0]);
-
-        System.out.println("currentX = "+ currentX);
-        System.out.println("currentY = " + currentY);
-        System.out.println("nextX = "+ nextX);
-        System.out.println("nextY = " + nextY);
-        System.out.println("nuova casella = "+ newCasella);
-        System.out.println("old casella = " + oldCasella);
 
         //gestione movimento troppo lungo
         if(Math.pow(nextY-currentY, 2)>1 || Math.pow(nextX-currentX, 2)>1){
@@ -89,36 +79,27 @@ public class Matrix {
         }
 
         if(newCasella.equals(" ")){ //movimento verso cella vuota
+            System.out.println("movimento verso cella vuota");
             grid[nextX][nextY] = symbol;
-            if(oldCasella!=symbol)
+            if(!oldCasella.equals(symbol))
                 grid[currentX][currentY] = String.valueOf(grid[currentX][currentY].charAt(0));
             else grid[currentX][currentY]=" ";
-            posizioni.replace(
-                    playerCode,
-                    String.valueOf(currentX)+String.valueOf(currentY),
-                    String.valueOf(nextX)+String.valueOf(nextY)
-            );
+
+            posizioni.replace(playerCode, String.valueOf(nextX)+","+String.valueOf(nextY));
             return true;
         } else if(newCasella.matches(".,.")){ //movimento spinta su muro
             System.out.println("movimento spinta su muro");
             return false;
         } else if(newCasella.matches("[0-9]*")){ //movimento salire su un muro
-            System.out.println("movimento salire su muro");
+            System.out.println("movimento salgo su muro");
             grid[nextX][nextY]=grid[nextX][nextY]+","+symbol;
 
-            if(!oldCasella.equals(symbol)) {
-                System.out.println("prima c'era anche un muro");
-                System.out.println(grid[currentX][currentY]);
-            } else {
-                System.out.println("prima non ci stava nulla");
-                grid[currentX][currentX]=" ";
-            }
-            posizioni.replace(
-                    playerCode,
-                    String.valueOf(currentX)+String.valueOf(currentY),
-                    String.valueOf(nextX)+String.valueOf(nextY)
-            );
-            System.out.println(posizioni.get(playerCode));
+            if(!oldCasella.equals(symbol))
+                grid[currentX][currentY] = String.valueOf(grid[currentX][currentY].charAt(0));
+            else grid[currentX][currentX]=" ";
+
+            String fin = String.valueOf(nextX)+","+String.valueOf(nextY);
+            posizioni.replace(playerCode, String.valueOf(nextX)+","+String.valueOf(nextY));
             return true;
         } else {
             System.out.println("spinta");
