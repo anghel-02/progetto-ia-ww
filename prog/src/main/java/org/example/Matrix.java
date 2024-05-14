@@ -105,58 +105,6 @@ public class Matrix {
             System.out.println("spinta");
             return false;
         }
-
-
-
-//        if(grid[nextX][nextY]!=" "){ // se la casella non è vuota
-//            if(grid[nextX][nextY]!="*") { // se la casella non è occupata
-//                System.out.println("Stai andado sopra un muro di liv = "+ grid[nextX][nextY]);
-//                grid[currentX][currentY]=" ";
-//                grid[nextX][nextY]=grid[nextX][nextY]+","+symbol;
-//                return true;
-//            }
-//        } else {
-//            grid[currentX][currentY]=" ";
-//            grid[nextX][nextY]=symbol;
-//            return true;
-//        }
-
-
-        //gestione spinta
-//        if(grid[nextX][nextY]=="*") {
-//            int playerSpinto = -1;
-//            for (HashMap.Entry<Integer, String> set : posizioni.entrySet()){
-//                if(set.getValue().equals(coord)) {
-//                    playerSpinto = set.getKey();
-//                }
-//            }
-//            System.out.println("PLayer spinto = "+ playerSpinto);
-//            int spintaX = nextX+(nextX-currentX);
-//            int spintaY = nextY+(nextY-currentY);
-//            String coordSpinta = String.valueOf(spintaX)+","+String.valueOf(spintaY);
-//            System.out.println("coordinata spinta = " + coordSpinta);
-//            posizioni.replace(playerSpinto, coord, coordSpinta);
-//            grid[nextX][nextY]=" ";
-//            grid[spintaX][spintaY]="*";
-//            return true;
-//        }
-
-
-
-
-//        if(this.grid[x][y]=="X")
-//            System.out.println("Non puoi andarci");
-//        else if(this.grid[x][y]!=" "){
-//            this.grid[x][y]=this.grid[x][y]+",["+String.valueOf(playerCode)+"]";
-//            int[] playerCurrentPosition = coordConvert(posizioni.get(playerCode));
-//            this.grid[playerCurrentPosition[0]][playerCurrentPosition[1]]=" ";
-//        } else if(this.grid[x][y]=="*") {
-//
-//        } else {
-//            this.grid[x][y]="*";
-//            int[] playerCurrentPosition = coordConvert(posizioni.get(playerCode));
-//            this.grid[playerCurrentPosition[0]][playerCurrentPosition[1]]=" ";
-//        }
     }
 
     public boolean placeWall(String coord) {
