@@ -99,7 +99,7 @@ public class MyHandler {
     }
 
     /**
-     * Add a fact accepting as parameter a string. <p>
+     * Add a fact accepting as parameter a {@code String}. <p>
      * The string must be in the form of a fact without '.' , for example: 
      * "fact" or "fact(1)" or "fact(1,a)". <p>
      * Actually string constants are not accepted, only integer and SymbolicConstant;  
@@ -116,6 +116,12 @@ public class MyHandler {
         
     }
 
+    /**
+     * Add a fact accepting as parameter an {@code Object}.<p>
+     * Call method {@code mapToEmb} before adding an {@code Object}.
+     * @param o
+     * @throws Exception
+     */
     public void addFactAsObject(Object o) throws Exception {
         if (o == null)
             throw new Exception("Object is null");
@@ -132,14 +138,23 @@ public class MyHandler {
         
     }
 
-
-    public void addEncoding(String  encodingPath) {
+    /**
+     * Add an encoding file (normally ASP program without facts). <p>
+     * @param encodingPath path relative to the project root
+     */
+    public void addEncoding(String encodingPath) {
         if (encodingPath == null || encodingPath.isEmpty())
             throw new RuntimeException("Encoding path is null or empty");
         enconding.addFilesPath(encodingPath);
     }
 
 //-----------------SOLVE----------------------------------------
+
+
+    /**
+     * Start the solving process. <p>
+     * Call this method before {@code getOutput}.
+     */
     public void startSync() {
         if (enconding.getFilesPaths().isEmpty())
             throw new RuntimeException("Encoding not found, please add encoding file with addEncoding method");
@@ -150,12 +165,19 @@ public class MyHandler {
             handler.addProgram(facts);
 
         output = handler.startSync();
+
     }
 
 
+    /**
+     * Get the output of the solving process. <p>
+     * Always call this method after {@code startSync} method. <p>
+     * To manage the output as answersets cast to {@code Answersets} type -> {@code (Answersets) output} .
+     * @return Output
+     */
     public Output getOutput(){
         if(output == null)
-            throw new RuntimeException("Output not found, maybe startSync methods was never launched");
+            throw new RuntimeException("Output is null, maybe startSync methods was never launched");
         return output;
     }
 
