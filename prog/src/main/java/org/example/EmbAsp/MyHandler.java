@@ -1,4 +1,4 @@
-package main.java.org.example.EmbAsp;
+package org.example.EmbAsp;
 
 import it.unical.mat.embasp.base.Handler;
 import it.unical.mat.embasp.base.InputProgram;
