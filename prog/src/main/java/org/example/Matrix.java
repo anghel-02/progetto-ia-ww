@@ -1,5 +1,7 @@
 package org.example;
 
+import org.example.threads.Players;
+
 import java.util.HashMap;
 
 public class Matrix {
@@ -9,8 +11,11 @@ public class Matrix {
     private int playerCounter = 0;
     private int currentTurn = 1;
 
+
     HashMap<Integer,String> posizioni = new HashMap<Integer,String>();
     HashMap<Integer,String> simboli = new HashMap<Integer,String>();
+
+    private final Object lock;
 
     public Matrix() {
         grid = new String[GRID_SIZE][GRID_SIZE];
@@ -20,7 +25,29 @@ public class Matrix {
                 grid[i][j] = " ";
             }
         }
+
+        lock = new Object();
     }
+
+//--GETTERS & SETTERS---------------------------------------------------------------------------------------------------
+
+    public int getPlayerCounter() {
+        return playerCounter;
+    }
+
+    /**
+     * Get the position of the player in the grid.
+     *
+     * @param playerCode the key of the player in {@code HashMap posizioni}
+     * @return the position of the player in the grid.
+     */
+    public String getPlayerPosition(int playerCode) {
+        return posizioni.get(playerCode);
+    }
+
+    public int getCurrentTurn() {return currentTurn; };
+
+//--UTILITY-------------------------------------------------------------------------------------------------------------
 
     private int[] coordConvert(String coord) {
         int[] c = new int[2];
@@ -28,6 +55,59 @@ public class Matrix {
         c[1] = Integer.parseInt(String.valueOf(coord.charAt(2)));
         return c;
     }
+
+//--THREADS-------------------------------------------------------------------------------------------------------------
+    /**
+     * This method must be called by PlayerThread to play his turn
+     */
+    public void playTurn(int playerCode){
+
+    //--WAIT TO ACQUIRE LOCK
+        synchronized (lock) {
+            while (currentTurn != playerCode ) {
+                try {
+                    lock.wait();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+    //--ACTUAL POSITION
+        String pos = getPlayerPosition(playerCode);
+
+    //--WALL
+        //PER PROVA piazza muro a destra
+        String wallPos = pos.charAt(0) + "," + (Integer.parseInt(String.valueOf(pos.charAt(2))) + 1);
+        System.out.println("Giocatore" + playerCode + " posiziona muro in " + wallPos);
+        placeWall(wallPos);
+
+        display();
+
+    //--MOVE
+        //PER PROVA muove il giocatore in basso , termina il thread se arriva alla fine
+        String movePos = (Integer.parseInt(String.valueOf(pos.charAt(0))) + 1) + "," + pos.charAt(2);
+        System.out.println("Giocatore" + playerCode + " si muove in " + movePos);
+
+        // PROVISSORIO
+        if (! movePlayer(playerCode, movePos)){
+            System.out.println("TERMINA IL THREAD (provissorio)");
+            Players.getInstance().stopPlayerThread();
+        }
+        //
+
+
+        display();
+
+    //--NEXT TURN
+        nextTurn();
+
+    //--RELEASE LOCK
+        lock.notify(); //ATTENZIONE , non ho ancora definito un ordine di accesso al lock nel caso ci fossero + di 2 giocatori.
+        }
+    }
+
+
+//--GAME----------------------------------------------------------------------------------------------------------------
 
     public void display() {
         for (int i = 0; i < GRID_SIZE; i++) {
@@ -38,7 +118,13 @@ public class Matrix {
         }
     }
 
-    public void insertPlayer(String coord, String symbol) {
+    /**
+     * Insert a player in the grid.
+     * @param coord
+     * @param symbol
+     * @return the playerCode
+     */
+    public int insertPlayer(String coord, String symbol) {
         int[] nCoord = coordConvert(coord);
         int x = nCoord[0];
         int y = nCoord[1];
@@ -47,10 +133,17 @@ public class Matrix {
         this.playerCounter++;
         posizioni.put(playerCounter,coord);
         simboli.put(playerCounter, symbol);
+
+        return playerCounter; //potrebbe servirmi in futuro -> per ora non lo uso - Vincenzo Sacco
     }
 
-    public int getCurrentTurn() {return currentTurn; };
 
+    /**
+     * Move the player in the grid.
+     * @param playerCode
+     * @param coord
+     * @return true if the player moved, false otherwise
+     */
     public boolean movePlayer(int playerCode, String coord) {
         // processo dell'input
         String symbol = simboli.get(playerCode);
@@ -189,5 +282,7 @@ public class Matrix {
     public void nextTurn() {
         this.currentTurn++;
         if (currentTurn>playerCounter) currentTurn = 1;
+
+
     }
 }

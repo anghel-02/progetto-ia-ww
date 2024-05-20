@@ -1,5 +1,8 @@
 package org.example;
 
+import org.example.threads.PlayerThread;
+import org.example.threads.Players;
+
 import java.util.Scanner;
 
 
@@ -42,13 +45,42 @@ public class Main {
                 moveCoord = sc.next();
             } while(! board.movePlayer(currentTurn, moveCoord));
 
-            board.nextTurn();
+            board.
+                    nextTurn();
         }
     }
 
-    public static void main(String[] args) {
-        Matrix gameboard = initGame();
-        startGame(gameboard);
+    /**
+     * Start the game with player as threads
+     */
+    private static void startGameThreads(Matrix board){
+    //--INIT THREADS
+        Players.getInstance().initPlayerThread(board);
 
+    //--START GAME
+        System.out.println("Griglia iniziale:");
+        board.display();
+        Players.getInstance().startPlayerThread();
+
+    }
+
+
+    public static void main(String[] args) {
+        System.out.println("Inserire 0 per eseguire il codice senza i thread, 1 per eseguire il codice con i thread");
+        int choice = sc.nextInt();
+
+        switch (choice) {
+            case 0:
+                startGame(initGame());
+
+            case 1:
+                Matrix gameboard = new Matrix();
+                gameboard.insertPlayer("0,0", "A");
+                gameboard.insertPlayer("2,2", "B");
+                startGameThreads(gameboard);
+
+            default:
+                System.out.println("Scelta non valida");
+        }
     }
 }
