@@ -1,7 +1,8 @@
 package org.example;
 
-import org.example.threads.PlayerThread;
-import org.example.threads.Players;
+import org.example.embAsp.MyHandler;
+import org.example.threads.GameRunner;
+
 
 import java.util.Scanner;
 
@@ -9,8 +10,8 @@ import java.util.Scanner;
 public class Main {
     public static Scanner sc = new Scanner(System.in);
 
-    private static Matrix initGame(){
-        Matrix gameBoard = new Matrix();
+    private static void initGame(){
+        Matrix gameBoard = Matrix.getInstance();
         System.out.print("Quanti giocatori? :");
         int numPlayer = sc.nextInt();
 
@@ -21,8 +22,7 @@ public class Main {
             String symbol = sc.next();
             gameBoard.insertPlayer(coord,symbol);
         }
-        return gameBoard;
-        
+
     }
 
     private static void startGame(Matrix board){
@@ -51,34 +51,34 @@ public class Main {
     }
 
     /**
-     * Start the game with player as threads
+     * Start the game with player managed by AI
      */
-    private static void startGameThreads(Matrix board){
-    //--INIT THREADS
-        Players.getInstance().initPlayerThread(board);
-
-    //--START GAME
-        System.out.println("Griglia iniziale:");
-        board.display();
-        Players.getInstance().startPlayerThread();
-
+    private static void startGameAI(){
+        GameRunner.getInstance().run();
     }
 
 
     public static void main(String[] args) {
-        System.out.println("Inserire 0 per eseguire il codice senza i thread, 1 per eseguire il codice con i thread");
+    //--SET PATH TO DLV2
+        MyHandler.setRelPathToDLV2(Settings.PATH_TO_DLV2);
+
+    //--
+        System.out.println("Inserire 0 per eseguire il codice in manuale, 1 per eseguire il codice con AI");
         int choice = sc.nextInt();
 
         switch (choice) {
             case 0:
-                startGame(initGame());
-
+                initGame();
+                startGame(Matrix.getInstance());
+                break;
             case 1:
-                Matrix gameboard = new Matrix();
-                gameboard.insertPlayer("0,0", "A");
-                gameboard.insertPlayer("2,2", "B");
-                startGameThreads(gameboard);
+                Matrix gameBoard = Matrix.getInstance();
+                gameBoard.insertPlayer("0,0", "A");
+                gameBoard.insertPlayer("2,2", "B");
+                startGameAI();
 
+                sc.close(); //close the scanner
+                break;
             default:
                 System.out.println("Scelta non valida");
         }

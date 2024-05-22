@@ -10,4 +10,26 @@ cella libera solo se non avv. , non 4
 se spingi rimani sulla cella
 se spinto muovi verso la direzione dalla quale sei stato spinto
 
+///////////////////////////////////////////////////////
+DAL LINK
+The Goal:
+Reach a height of 3 levels before your opponent.
 
+Rules:
+The game is played on a square grid of a given size. Both players start with one unit placed randomly on the grid.
+
+Both players take it in turns to perform an action with their unit. To win the game, players must get their unit to climb up cells and reach a height of 3 levels.
+
+The grid
+Cells can be floors or holes. A floor is represented by an integer, a hole is represented by a dot (.). Holes are considered as outside the playable area.
+Each cell in the playable area has a height going from 0 to 3. A height of 4 is outside the playable area.
+
+The units
+Each unit occupies a cell in the playable area of the grid and has the power to MOVE and then BUILD.
+A unit may move to any neighboring cell, including diagonals. The unit may only move on the same level, step up one level or step down any number of levels.
+After every movement, the unit must be able to build onto an adjacent cell of its new position. This causes the cell in question to gain 1 unit of height. If the height reaches level 4, the cell is considered removed from play.
+If your unit moves onto a level 3 cell, you win the game.
+Actions
+
+Every turn, your unit must perform a valid pair of actions:
+MOVE&BUILD: The unit moves in a given direction on the grid, then places an extra level on a neighboring cell.

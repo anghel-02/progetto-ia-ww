@@ -8,17 +8,23 @@ import it.unical.mat.embasp.languages.IllegalAnnotationException;
 import it.unical.mat.embasp.languages.ObjectNotValidException;
 import it.unical.mat.embasp.languages.asp.ASPInputProgram;
 import it.unical.mat.embasp.languages.asp.ASPMapper;
+import it.unical.mat.embasp.languages.asp.AnswerSet;
+import it.unical.mat.embasp.languages.asp.AnswerSets;
 import it.unical.mat.embasp.platforms.desktop.DesktopHandler;
 import it.unical.mat.embasp.platforms.desktop.DesktopService;
 import it.unical.mat.embasp.specializations.dlv2.desktop.DLV2DesktopService;
+import org.example.Settings;
 
 import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
  * Creata da me velocemente per gestire EmbASP
- */
+ * Settare il path a DLV2 in Settings
+ * */
 public class MyHandler {
+    private static String REL_PATH_TO_DLV2 ="";
+
     private DesktopService service;
     private Handler handler;
 
@@ -27,6 +33,7 @@ public class MyHandler {
 
     
     private Output output;
+    private AnswerSets answerSets;
     private OptionDescriptor option;
     private Integer OPTION_ID_n0 = null ;
 
@@ -39,10 +46,23 @@ public class MyHandler {
 
 
     private void initEmbAsp() {
-        service = new DLV2DesktopService("lib/dlv2.exe");
+        if (REL_PATH_TO_DLV2.isEmpty()){
+            throw new RuntimeException("Path to DLV2 not set, please set it calling setRelPathToDLV2 method");
+        }
+        service = new DLV2DesktopService(REL_PATH_TO_DLV2);
         handler = new DesktopHandler(service);
         facts = new ASPInputProgram();
         enconding = new ASPInputProgram();
+    }
+
+//--GETTERS & SETTERS---------------------------------------------------------------------------------------------------
+
+    /**
+     * Set the relative path to DLV2. <p>
+     * @param path
+     */
+    public static void setRelPathToDLV2(String path){
+        REL_PATH_TO_DLV2 = path;
     }
 
 //-----------------METHODS----------------------------------------
@@ -139,7 +159,7 @@ public class MyHandler {
     }
 
     /**
-     * Add an encoding file (normally ASP program without facts). <p>
+     * Add an encoding file (ASP program). <p>
      * @param encodingPath path relative to the project root
      */
     public void addEncoding(String encodingPath) {
@@ -148,7 +168,7 @@ public class MyHandler {
         enconding.addFilesPath(encodingPath);
     }
 
-//-----------------SOLVE----------------------------------------
+//--SOLVE-------------------------------------------------------------------------------------------------------------
 
 
     /**
@@ -166,6 +186,7 @@ public class MyHandler {
 
         output = handler.startSync();
 
+
     }
 
 
@@ -180,6 +201,8 @@ public class MyHandler {
             throw new RuntimeException("Output is null, maybe startSync methods was never launched");
         return output;
     }
+
+
 
 
 

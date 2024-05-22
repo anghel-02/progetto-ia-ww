@@ -1,11 +1,17 @@
 package org.example;
 
-import org.example.threads.Players;
-
 import java.util.HashMap;
 
+/**
+ * Singleton Class that represents the game board.
+ */
 public class Matrix {
-    private static final int GRID_SIZE = 5;
+    private static Matrix instance = null;
+
+
+    public static final int GRID_SIZE = 5;
+    public static final String EMPTY_CELL_VAL= " ";
+
     private String[][] grid;
     private int[][] wallGrid;
     private int playerCounter = 0;
@@ -16,27 +22,40 @@ public class Matrix {
     HashMap<Integer,String> simboli = new HashMap<Integer,String>();
 
     private final Object lock;
+    private boolean isTerminated = false;
 
-    public Matrix() {
+//--CONSTRUCTOR---------------------------------------------------------------------------------------------------------
+    private Matrix() {
         grid = new String[GRID_SIZE][GRID_SIZE];
 
         for (int i = 0; i < GRID_SIZE; i++) {
             for (int j = 0; j < GRID_SIZE; j++) {
-                grid[i][j] = " ";
+                grid[i][j] = EMPTY_CELL_VAL;
             }
         }
 
         lock = new Object();
     }
 
+    public static Matrix getInstance() {
+        if (instance == null) {
+            instance = new Matrix();
+        }
+        return instance;
+    }
+
 //--GETTERS & SETTERS---------------------------------------------------------------------------------------------------
+
+    public String[][] getGrid() {
+        return grid;
+    }
 
     public int getPlayerCounter() {
         return playerCounter;
     }
 
     /**
-     * Get the position of the player in the grid.
+     * Get the position of a player in the grid.
      *
      * @param playerCode the key of the player in {@code HashMap posizioni}
      * @return the position of the player in the grid.
@@ -44,8 +63,15 @@ public class Matrix {
     public String getPlayerPosition(int playerCode) {
         return posizioni.get(playerCode);
     }
+    public String getPlayerSymbol(int playerCode) {
+        return simboli.get(playerCode);
+    }
 
     public int getCurrentTurn() {return currentTurn; };
+
+    public boolean isTerminated() {
+        return isTerminated;
+    }
 
 //--UTILITY-------------------------------------------------------------------------------------------------------------
 
@@ -57,20 +83,18 @@ public class Matrix {
     }
 
 //--THREADS-------------------------------------------------------------------------------------------------------------
-    /**
-     * This method must be called by PlayerThread to play his turn
-     */
+
     public void playTurn(int playerCode){
 
     //--WAIT TO ACQUIRE LOCK
-        synchronized (lock) {
-            while (currentTurn != playerCode ) {
-                try {
-                    lock.wait();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            }
+//        synchronized (lock) {
+//            while (currentTurn != playerCode ) {
+//                try {
+//                    lock.wait();
+//                } catch (InterruptedException e) {
+//                    throw new RuntimeException(e);
+//                }
+//            }
 
     //--ACTUAL POSITION
         String pos = getPlayerPosition(playerCode);
@@ -91,7 +115,7 @@ public class Matrix {
         // PROVISSORIO
         if (! movePlayer(playerCode, movePos)){
             System.out.println("TERMINA IL THREAD (provissorio)");
-            Players.getInstance().stopPlayerThread();
+            isTerminated=true;
         }
         //
 
@@ -102,8 +126,8 @@ public class Matrix {
         nextTurn();
 
     //--RELEASE LOCK
-        lock.notify(); //ATTENZIONE , non ho ancora definito un ordine di accesso al lock nel caso ci fossero + di 2 giocatori.
-        }
+//        lock.notify(); //ATTENZIONE , non ho ancora definito un ordine di accesso al lock nel caso ci fossero + di 2 giocatori.
+//        }
     }
 
 
@@ -124,7 +148,7 @@ public class Matrix {
      * @param symbol
      * @return the playerCode
      */
-    public int insertPlayer(String coord, String symbol) {
+    public void insertPlayer(String coord, String symbol) {
         int[] nCoord = coordConvert(coord);
         int x = nCoord[0];
         int y = nCoord[1];
@@ -134,7 +158,6 @@ public class Matrix {
         posizioni.put(playerCounter,coord);
         simboli.put(playerCounter, symbol);
 
-        return playerCounter; //potrebbe servirmi in futuro -> per ora non lo uso - Vincenzo Sacco
     }
 
 
