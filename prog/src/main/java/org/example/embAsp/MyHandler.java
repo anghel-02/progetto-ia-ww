@@ -44,6 +44,12 @@ public class MyHandler {
         option = new OptionDescriptor("-n 0");
     }
 
+    public MyHandler(String encodingPath){
+        initEmbAsp();
+        option = new OptionDescriptor("-n 0");
+        addEncoding(encodingPath);
+    }
+
 
     private void initEmbAsp() {
         if (REL_PATH_TO_DLV2.isEmpty()){
@@ -67,8 +73,8 @@ public class MyHandler {
 
 //-----------------METHODS----------------------------------------
 
-    public void clearAll(){
-        handler.removeAll();
+    public void clearFacts(){
+        facts.clearAll();
     }
 
     public void showAllAnswerSet(boolean flag){
@@ -166,6 +172,10 @@ public class MyHandler {
         if (encodingPath == null || encodingPath.isEmpty())
             throw new RuntimeException("Encoding path is null or empty");
         enconding.addFilesPath(encodingPath);
+    }
+
+    public void addInputProgram(InputProgram program){
+        enconding = program;
     }
 
 //--SOLVE-------------------------------------------------------------------------------------------------------------
