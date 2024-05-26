@@ -8,10 +8,10 @@ public class Player {
     protected final int playerCode;
 
     private static int NEXT_UNIT_CODE = 0;
-    record unit(int unitCode, Point coord){} ;
+    public record unit(int unitCode, Point coord){} ;
     protected final ArrayList<unit> units;
 
-    Player(char symbol, int playerCode) {
+    public Player(char symbol, int playerCode) {
         this.symbol = symbol;
         this.playerCode = playerCode;
         this.units = new ArrayList<>();

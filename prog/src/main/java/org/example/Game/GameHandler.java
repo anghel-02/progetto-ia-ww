@@ -1,6 +1,8 @@
 package org.example.Game;
 
 
+import org.example.Game.embASP.PlayerAi;
+
 import java.awt.*;
 import java.util.Random;
 import java.util.Scanner;
@@ -11,23 +13,28 @@ import java.util.concurrent.Executors;
 /**
  * Static class used to handle the game board.
  */
+//TODO: cambiare sta classe in singleton
 public class GameHandler {
     public static final int RUN_MODE_MANUAL = 0;
     public static final int RUN_MODE_AI = 1;
 
     private static final Scanner sc = new Scanner(System.in);
-    static Board board ;
+    private static Board board ;
 
     private static final Player[] players = new Player[Board.N_PLAYERS];
 
 //--RUN METHODS--------------------------------------------------------------------------------------------------------
+    public static Board getBoard(){
+        return board;
+    }
 
+    //TODO: cambiare sti parametri
     //!!!Actually works only for single unit per player
-    public static void runAI(String folderPath1, String folderPath2){
+    public static void runAI(String folderPath1, String folderPath2, int groupID1, int groupID2){
         char [] symbols = Input.startInput();
 
-        players[0] = new PlayerAi(symbols[0], 0, folderPath1);
-        players[1] = new PlayerAi(symbols[1], 1, folderPath2);
+        players[0] = new PlayerAi(symbols[0], 0,folderPath1, groupID1);
+        players[1] = new PlayerAi(symbols[1], 1,folderPath2, groupID2);
         initGame();
 
         System.out.println("---AI MODE---");

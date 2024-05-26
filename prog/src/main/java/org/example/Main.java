@@ -31,6 +31,7 @@ public class Main {
                 break;
             case "1":
                 String folderPath1 , folderPath2;
+                int groupID1, groupID2;
 
                 System.out.println("Scegliere quali gruppi si scontreranno tra {1-2-3-4}");
                 //TODO: implementare check su scelta gruppi
@@ -39,35 +40,44 @@ public class Main {
                 switch (group){
                     case "1":
                         folderPath1 = Settings.PATH_TO_GROUP1;
+                        groupID1 = 1;
                         break;
                     case "2":
                         folderPath1 = Settings.PATH_TO_GROUP2;
+                        groupID1 = 2;
                         break;
                     case "3":
                         folderPath1 = Settings.PATH_TO_GROUP3;
+                        groupID1 = 3;
                         break;
                     case "4":
                         folderPath1 = Settings.PATH_TO_GROUP4;
+                        groupID1 = 4;
                         break;
                     default:
                         System.out.println("Scelta non valida");
                         main(args);
                         return;
                 }
+
                 System.out.print("vs Gruppo: ");
                 group= sc.next();
                 switch (group){
                     case "1":
                         folderPath2 = Settings.PATH_TO_GROUP1;
+                        groupID2 = 1;
                         break;
                     case "2":
                         folderPath2 = Settings.PATH_TO_GROUP2;
+                        groupID2 = 2;
                         break;
                     case "3":
                         folderPath2 = Settings.PATH_TO_GROUP3;
+                        groupID2 = 3;
                         break;
                     case "4":
                         folderPath2 = Settings.PATH_TO_GROUP4;
+                        groupID2 = 4;
                         break;
                     default:
                         System.out.println("Scelta non valida");
@@ -79,7 +89,7 @@ public class Main {
 
 
 
-                GameHandler.runAI(folderPath1, folderPath2);
+                GameHandler.runAI(folderPath1, folderPath2, groupID1, groupID2);
                 break;
             default:
                 System.out.println("Scelta non valida");

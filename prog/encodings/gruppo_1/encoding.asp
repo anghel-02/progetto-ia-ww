@@ -1,15 +1,40 @@
 %%FACTS
+%floor(X,Y,H) -->   |externally added 
+%unit(X,Y,P) --> externally added 
+%player(P) --> externally added
 
-%cell(X,Y). -> playable cell , added by PlayerAi
 
 %%RULES
 
-#show in/2.
+#show moveIn/2.
+#show buildIn/2.
 
-in(X,Y) | out(X,Y) :- cell(X,Y).
+%%AUXILIARY
+%cell(X,Y). -> playable cell , externally added 
 
-:- in(X,Y), unit(X,Y).
-:- in(X,Y), floor(X,Y,4).
+%%GUESS
+moveIn(X,Y) | moveOut(X,Y) :- cell(X,Y).
+buildIn(X,Y) | buildOut(X,Y) :- cell(X,Y).
+
+
+%%CHECK
+
+%MOVE------------------------------------------------------------------------------
 
 % can choose only one cell
-:- #count{X,Y : in(X,Y)} <> 1.
+:- #count{X,Y : moveIn(X,Y)} <> 1.
+
+% can't choose an occupied cell
+:- moveIn(X,Y), unit(X,Y).
+
+% can't move to a floor higher than 1 relative to the current floor  
+
+
+
+
+%-BUILD-----------------------------------------------------------------------------
+% can't choose an occupied cell 
+:- buildIn(X,Y), unit(X,Y).
+
+% can choose only one cell
+:- #count{X,Y : buildIn(X,Y)} <> 1.

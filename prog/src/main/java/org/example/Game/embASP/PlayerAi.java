@@ -1,13 +1,12 @@
-package org.example.Game;
+package org.example.Game.embASP;
 
 
 import it.unical.mat.embasp.base.InputProgram;
 import it.unical.mat.embasp.languages.asp.AnswerSet;
 import it.unical.mat.embasp.languages.asp.AnswerSets;
+import org.example.Game.Player;
+import org.example.Game.actionSet;
 import org.example.embAsp.WondevWomanHandler;
-import org.example.embAsp.cell;
-import org.example.embAsp.floor;
-import org.example.embAsp.unitASP;
 
 import java.awt.*;
 import java.lang.reflect.InvocationTargetException;
@@ -15,7 +14,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.stream.Stream;
 
@@ -23,17 +21,42 @@ import java.util.stream.Stream;
 public class PlayerAi extends Player implements Callable<actionSet> {
     private final String dirPath;
     private final ArrayList<InputProgram> encodings;
-    private  WondevWomanHandler handler;
+    private WondevWomanHandler handler;
+    private final int groupID;
 
 
-    PlayerAi(char symbol, int playerCode, String dirPath) {
+    public PlayerAi(char symbol, int playerCode, String dirPath, int groupID) {
         super(symbol, playerCode);
-
         this.dirPath = dirPath;
+        this.groupID = groupID;
+
         handler = new WondevWomanHandler();
         encodings = new ArrayList<>();
         addEncodingsFromFolder();
 
+    }
+
+//--GETTERS AND SETTERS--------------------------------------------------------------------------------------------------
+
+    int getGroupID()
+    {
+        return groupID;
+    }
+
+    ArrayList<InputProgram> getEncodings() {
+        return encodings;
+    }
+
+    WondevWomanHandler getHandler() {
+        return handler;
+    }
+
+    void setHandler(WondevWomanHandler handler) {
+        this.handler = handler;
+    }
+
+    ArrayList<unit> getUnits(){
+        return units;
     }
 
 //--EMB ASP METHODS-----------------------------------------------------------------------------------------------------
@@ -44,26 +67,10 @@ public class PlayerAi extends Player implements Callable<actionSet> {
 //--GAME METHODS--------------------------------------------------------------------------------------------------------
     @Override
     public actionSet call() throws Exception {
+        //TODO: actually works only for single unit per player
+        //TODO : trovare un modo per non inizializzare ogni volta handler in Gruppi.java
+        Gruppi.call(this);
         unit myUnit = units.getFirst();
-        handler= new WondevWomanHandler();
-        handler.addInputProgram(encodings.getFirst());
-
-        for (Point coord: GameHandler.board.playableArea(myUnit.unitCode()) ){
-            handler.addFactAsObject(new cell(coord.x, coord.y));
-        }
-
-    //--ADD FLOORS
-        int [][] grid = GameHandler.board.getGrid();
-        for (int i = 0; i < grid.length; i++) {
-            for (int j = 0; j < grid[i].length; j++) {
-                handler.addFactAsObject(new floor(i, j, grid[i][j]));
-    //--ADD UNITS
-                if (GameHandler.board.isOccupied(i, j)){
-                    handler.addFactAsObject(new unitASP(i, j));
-                }
-            }
-        }
-
         return makeAction(myUnit);
     }
 

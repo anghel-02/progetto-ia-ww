@@ -3,7 +3,6 @@ package org.example.Game;
 import java.awt.*;
 import java.util.Scanner;
 
-import static org.example.Game.GameHandler.board;
 
 public class Input {
     private static final Scanner sc = new Scanner(System.in);
@@ -44,7 +43,7 @@ public class Input {
         int x = Integer.parseInt(moveStr.substring(0,1));
         int y = Integer.parseInt(moveStr.substring(2));
         move = new Point( x,y);
-        if (! board.canMove(unitCode, move))
+        if (! GameHandler.getBoard().canMove(unitCode, move))
             return moveManual(player);
 
 
@@ -74,7 +73,7 @@ public class Input {
          int y = Integer.parseInt(buildStr.substring(2));
          build = new Point(x,y);
 
-         if (! board.canBuild(unitCode, build))
+         if (! GameHandler.getBoard().canBuild(unitCode, build))
              return buildManual(player);
 
          return build;

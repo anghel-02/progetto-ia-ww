@@ -58,7 +58,7 @@ public class Board {
      * The grid is a matrix of integers which represent floors height
      * @return
      */
-    int[][] getGrid() {
+    public int[][] getGrid() {
         return grid;
     }
 
@@ -66,7 +66,7 @@ public class Board {
         return players;
     }
 
-    boolean isTerminated() {
+    public boolean isTerminated() {
         return isTerminated;
     }
 
@@ -75,7 +75,7 @@ public class Board {
      * @param coord
      * @return
      */
-    boolean isOccupied(Point coord) {
+    public boolean isOccupied(Point coord) {
         return isOccupied(coord.x,coord.y);
     }
 
@@ -85,7 +85,7 @@ public class Board {
      * @param y
      * @return {@code true} if the cell is occupied, {@code false} otherwise
      */
-    boolean isOccupied(int x, int y) {
+    public boolean isOccupied(int x, int y) {
         for (Point cell : unitCoord.values()){
             if (cell.x == x && cell.y == y)
                 return true;
@@ -98,7 +98,7 @@ public class Board {
 
 //--GAME----------------------------------------------------------------------------------------------------------------
     private String [][] display = new String[ROW_SIZE][COL_SIZE];
-    void display() {
+    public void display() {
         System.out.println();
 
     //--REFRESH toDisplay
@@ -128,7 +128,7 @@ public class Board {
 
     }
 
-    int addUnit(int playerCode, Point coord) {
+    public int addUnit(int playerCode, Point coord) {
         if(playerCode < 0 || playerCode > N_PLAYERS-1){
             throw new IllegalArgumentException("playerCode must be between 0 and " + (N_PLAYERS-1));
         }
@@ -149,12 +149,12 @@ public class Board {
         return unitCode;
     }
 
-    int addUnit(char symbol, int x, int y) {
+    public int addUnit(char symbol, int x, int y) {
          return addUnit(symbol, new Point(x,y));
 
     }
 
-    boolean canMove(int unitCode, Point coord){
+    public boolean canMove(int unitCode, Point coord){
 //    A unit may move to any neighboring cell, including diagonals.
 //    The unit may only move on the same level, step up one level or step down any number of levels.
 
@@ -204,7 +204,7 @@ public class Board {
 
     }
 
-    boolean canMove(int unitCode, int x, int y){
+    public boolean canMove(int unitCode, int x, int y){
         return canMove(unitCode, new Point(x,y));
     }
 
@@ -216,7 +216,7 @@ public class Board {
      * @param coord
      * @return
      */
-    boolean moveUnitSafe(int unitCode, Point coord){
+    public boolean moveUnitSafe(int unitCode, Point coord){
         if (canMove(unitCode,coord)){
             unitCoord.put(unitCode,coord); // if you put the same key, it will overwrite the value
 
@@ -236,12 +236,12 @@ public class Board {
      * @param y
      * @return
      */
-    boolean moveUnitSafe(int unitCode, int x, int y){
+    public boolean moveUnitSafe(int unitCode, int x, int y){
         return moveUnitSafe(unitCode, new Point(x,y));
     }
 
 
-    boolean canBuild(int unitCode, Point coord) {
+    public boolean canBuild(int unitCode, Point coord) {
         int currentX = unitCoord.get(unitCode).x;
         int currentY = unitCoord.get(unitCode).y;
         int toBuildX = coord.x;
@@ -275,7 +275,7 @@ public class Board {
         return true;
     }
 
-    boolean buildFloor(int unitCode,Point coord) {
+    public boolean buildFloor(int unitCode,Point coord) {
         if (canBuild(unitCode, coord)){
             grid[coord.x][coord.y]++;
             return true;
@@ -284,7 +284,7 @@ public class Board {
 
 }
 
-    boolean buildFloor(int unitCode, int x, int y) {
+    public boolean buildFloor(int unitCode, int x, int y) {
         return buildFloor(unitCode,new Point(x,y));
     }
 
