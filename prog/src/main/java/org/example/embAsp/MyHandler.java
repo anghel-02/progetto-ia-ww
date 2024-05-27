@@ -195,6 +195,8 @@ public class MyHandler {
             handler.addProgram(facts);
 
         output = handler.startSync();
+        if (! output.getErrors().isEmpty())
+            throw new RuntimeException("Errors in output: "+ output.getErrors());
 
 
     }
@@ -209,9 +211,15 @@ public class MyHandler {
     public Output getOutput(){
         if(output == null)
             throw new RuntimeException("Output is null, maybe startSync methods was never launched");
+
         return output;
     }
 
+    public boolean isIncoherent(){
+        return output.getOutput().matches("DLV 2.1.2\n" +
+                "\n" +
+                "INCOHERENT\n");
+    }
 
 
 

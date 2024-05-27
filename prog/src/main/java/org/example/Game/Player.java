@@ -17,15 +17,15 @@ public class Player {
         this.units = new ArrayList<>();
     }
 
-    char getSymbol() {
+    public char getSymbol() {
         return symbol;
     }
 
-    int getPlayerCode() {
+    public int getPlayerCode() {
         return playerCode;
     }
 
-    unit getUnit(int unitCode) {
+    public unit getUnit(int unitCode) {
         checkUnitCode(unitCode);
 
         for (unit unit : units) {
@@ -36,7 +36,7 @@ public class Player {
         return null;
     }
 
-    unit getUnit(Point coord) {
+    public unit getUnit(Point coord) {
         checkCoord(coord);
         for (unit unit : units) {
             if (unit.coord.equals(coord)) {
@@ -46,7 +46,7 @@ public class Player {
 
         return null;
     }
-    unit getUnit( int x, int y) {
+    public unit getUnit( int x, int y) {
         return getUnit(new Point(x, y));
     }
 
@@ -55,11 +55,11 @@ public class Player {
      * Is equivalent to call method {@code getUnits().get(0)}
      * @return
      */
-    unit getFirstUnit() {
+    public unit getFirstUnit() {
         return units.getFirst();
     }
 
-    ArrayList<unit> getUnits() {
+    public ArrayList<unit> getUnits() {
         return units;
     }
 //--UTITILY-------------------------------------------------------------------------------------------------------------

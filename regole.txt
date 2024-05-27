@@ -26,8 +26,8 @@ Each cell in the playable area has a height going from 0 to 3. A height of 4 is 
 
 The units
 Each unit occupies a cell in the playable area of the grid and has the power to MOVE and then BUILD.
-A unit may move to any neighboring cell, including diagonals. The unit may only move on the same level, step up one level or step down any number of levels.
-After every movement, the unit must be able to build onto an adjacent cell of its new position. This causes the cell in question to gain 1 unit of height.
+A unit may moveIn to any neighboring cell, including diagonals. The unit may only moveIn on the same level, step up one level or step down any number of levels.
+After every movement, the unit must be able to buildIn onto an adjacent cell of its new position. This causes the cell in question to gain 1 unit of height.
 If the height reaches level 4, the cell is considered removed from play.
 If your unit moves onto a level 3 cell, you win the game.
 

@@ -5,16 +5,19 @@ import it.unical.mat.embasp.languages.Param;
 
 import java.util.Objects;
 
-@Id("unit") //unit(X,Y)
+@Id("unit") //unit(X,Y,P)
 public class unitASP {
     @Param(0)
     private int x;
     @Param(1)
     private int y;
+    @Param(2)
+    private int playerCode;
 
-    public unitASP(int x, int y) {
+    public unitASP(int x, int y, int playerCode) {
         this.x = x;
         this.y = y;
+        this.playerCode = playerCode;
     }
 
     public unitASP() {
@@ -37,25 +40,34 @@ public class unitASP {
         this.y = y;
     }
 
+    public int getPlayerCode() {
+        return playerCode;
+    }
+
+    public void setPlayerCode(int playerCode) {
+        this.playerCode = playerCode;
+    }
+
     //--UTILITIES-----------------------------------------------------------------------------------------------------------
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         unitASP unitASP = (unitASP) o;
-        return x == unitASP.x && y == unitASP.y ;
+        return x == unitASP.x && y == unitASP.y && playerCode == unitASP.playerCode;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(x, y);
+        return Objects.hash(x, y, playerCode);
     }
 
     @Override
     public String toString() {
-        return " player(" +
+        return " unit(" +
                 x +
                 "," + y +
+                "," + playerCode +
                 ") ";
     }
 }

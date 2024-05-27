@@ -8,8 +8,11 @@ import it.unical.mat.embasp.languages.asp.AnswerSets;
 import org.example.Game.Player;
 import org.example.Game.actionSet;
 import org.example.embAsp.WondevWomanHandler;
+import org.example.embAsp.buildIn;
+import org.example.embAsp.moveIn;
 
 import java.awt.*;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.Path;
@@ -25,7 +28,7 @@ public class PlayerAi extends Player implements Callable<actionSet> {
     private final int groupID;
 
 
-    public PlayerAi(char symbol, int playerCode, String dirPath, int groupID) {
+     public PlayerAi(char symbol, int playerCode, String dirPath, int groupID) {
         super(symbol, playerCode);
         this.dirPath = dirPath;
         this.groupID = groupID;
@@ -37,6 +40,7 @@ public class PlayerAi extends Player implements Callable<actionSet> {
     }
 
 //--GETTERS AND SETTERS--------------------------------------------------------------------------------------------------
+
 
     int getGroupID()
     {
@@ -55,9 +59,6 @@ public class PlayerAi extends Player implements Callable<actionSet> {
         this.handler = handler;
     }
 
-    ArrayList<unit> getUnits(){
-        return units;
-    }
 
 //--EMB ASP METHODS-----------------------------------------------------------------------------------------------------
     void addInputProgram(InputProgram inputProg){
@@ -77,20 +78,31 @@ public class PlayerAi extends Player implements Callable<actionSet> {
 
 
     //Actually works only for single unit per player
-    actionSet makeAction(unit myUnit) {
+    actionSet makeAction(unit myUnit) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, InstantiationException {
 
 
-    //TODO: Gestire answerset diversamente , ora da erroe perchè uso le strighe
+
         handler.startSync();
-        AnswerSets as= (AnswerSets) handler.getOutput();
-        String a = "";
-        for (AnswerSet answerSet: as.getAnswersets() ) {
-             a = answerSet.toString();
+        AnswerSets as;
+        if (! handler.isIncoherent()){
+            as = (AnswerSets) handler.getOutput();
+//            System.out.println(as.getOutput());
+        }
+        else {
+            throw new RuntimeException("INCOHERENT output");
         }
 
-        //prova
-        Point move = new Point(Integer.parseInt(a.substring(4,5)) , Integer.parseInt(a.substring(6,7)));
-        Point build = new Point(myUnit.coord());
+        Point move = null;
+        Point build= null;
+        for (AnswerSet answerSet: as.getAnswersets() ) {
+             for (Object obj :answerSet.getAtoms()){
+                if(obj instanceof moveIn)
+                    move = new Point(((moveIn) obj).getX(), ((moveIn) obj).getY());
+                else if(obj instanceof buildIn)
+                    build = new Point(((buildIn) obj).getX(), ((buildIn) obj).getY());
+
+             }
+        }
 
 
         return new actionSet(this, myUnit, move, build);

@@ -5,25 +5,20 @@ import it.unical.mat.embasp.languages.Param;
 
 import java.util.Objects;
 
-@Id("floor") // floor(X,Y,H)
-public class floor {
+@Id("buildIn") //buildIn(x,y)
+public class buildIn {
     @Param(0)
     private int x;
     @Param(1)
     private int y;
-    @Param(2)
-    private int height;
 
-    public floor(int x, int y, int height) {
+    public buildIn() {
+    }
+    public buildIn(int x, int y) {
         this.x = x;
         this.y = y;
-        this.height = height;
     }
 
-    public floor() {
-
-    }
-    //--GETTERS AND SETTERS-------------------------------------------------------------------------------------------------
     public int getX() {
         return x;
     }
@@ -40,34 +35,24 @@ public class floor {
         this.y = y;
     }
 
-    public int getHeight() {
-        return height;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
-    }
-
-    //--UTILITIES-----------------------------------------------------------------------------------------------------------
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        floor floor = (floor) o;
-        return x == floor.x && y == floor.y && height == floor.height;
+        buildIn buildIn = (buildIn) o;
+        return x == buildIn.x && y == buildIn.y;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(x, y, height);
+        return Objects.hash(x, y);
     }
 
     @Override
     public String toString() {
-        return " floor(" +
+        return " buildIn(" +
                 x +
                 "," + y +
-                "," + height +
                 ") ";
     }
 }

@@ -62,7 +62,7 @@ public class Board {
         return grid;
     }
 
-    Player[] getPlayers() {
+    public Player[] getPlayers() {
         return players;
     }
 

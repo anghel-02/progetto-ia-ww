@@ -11,6 +11,8 @@ public class WondevWomanHandler extends MyHandler{
             mapToEmb(cell.class);
             mapToEmb(unitASP.class);
             mapToEmb(floor.class);
+            mapToEmb(buildIn.class);
+            mapToEmb(moveIn.class);
         } catch (ObjectNotValidException | IllegalAnnotationException e) {
             throw new RuntimeException(e);
         }

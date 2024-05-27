@@ -1,7 +1,7 @@
 package org.example.Game;
 
 
-import org.example.Game.embASP.PlayerAi;
+import org.example.Game.ai.PlayerAi;
 
 import java.awt.*;
 import java.util.Random;
