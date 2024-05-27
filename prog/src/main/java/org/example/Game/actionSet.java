@@ -13,6 +13,10 @@ public record actionSet(Player player, Player.unit unit , Point move, Point buil
         }
     }
 
+    public String display() {
+        return "\nPlayer " + player.getSymbol() + " moves to ("+ move.x + "," + move.y +") and builds at (" + build.x + "," + build.y + ")";
+    }
+
     @Override
     public String toString() {
         return " actionSet(" +

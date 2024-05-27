@@ -224,6 +224,11 @@ public class Board {
                 // if the unit is not found, it will return false and nothing will happen
                 p.moveUnitSafe(unitCode,coord);
 
+        //--WIN
+            if (grid[coord.x][coord.y] == FLOOR_HEIGHT_3){
+                isTerminated = true;
+            }
+
             return true;
         }
         return false;

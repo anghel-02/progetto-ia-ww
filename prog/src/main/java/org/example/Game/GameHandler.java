@@ -37,19 +37,49 @@ public class GameHandler {
         players[1] = new PlayerAi(symbols[1], 1,folderPath2, groupID2);
         initGame();
 
-        System.out.println("---AI MODE---");
+    //--JUST AESTHETIC
+        String aiMode = "AI  MODE";
+
+        for (int i = 0; i < 1; i++) {
+            System.out.println();
+            for (int j = 0; j < 50; j++) {
+                System.out.print("*");
+            }
+        }
+
+        System.out.println();
+
+        for (int i = 0; i < 25 - aiMode.length()/2; i++) {
+            System.out.print("*");
+        }
+        System.out.print(aiMode);
+        for (int i = 0; i < 25 - aiMode.length()/2; i++) {
+            System.out.print("*");
+        }
+        for (int i = 0; i < 1; i++) {
+            System.out.println();
+            for (int j = 0; j < 50; j++) {
+                System.out.print("*");
+            }
+        }
+
+        System.out.print("\n\nSPAWN UNITS");
         board.display();
 
     //--THREADS
         ExecutorService executorService=Executors.newFixedThreadPool(2);
         try {
             while (true){
-                for (Player player : players) {
-                    actionSet action = executorService.submit((PlayerAi) player).get();
+                for (Player p : players) {
+                    actionSet action = executorService.submit((PlayerAi) p).get();
                     playTurn(action);
 
 
                     if (board.isTerminated()){
+                        for (int i = 0; i < 50; i++) {
+                            System.out.print("*");
+                        }
+                        System.out.println("\nPLAYER "+ p.getSymbol() + " WINS!");
                         sc.close();
                         return;
                     }
@@ -131,18 +161,20 @@ public class GameHandler {
 
             }
         }
-
-
-
-
     }
 
 
     private static void playTurn(actionSet action){
-//        System.out.println(action.toString());
-        board.moveUnitSafe(action.unit().unitCode(), action.move());
-        board.display();
-        board.buildFloor(action.unit().unitCode(),action.build());
+        System.out.print( action.display());
+    //TODO: RIMUOVERE IF AL TERMINE DELLA FASE DI SVILUPPO O COMUNQUE NON SERVONO PIU
+        if(! board.moveUnitSafe(action.unit().unitCode(), action.move()))
+            //LA TUA AI SI E' FATTA UNO SPINIELLO BRO
+            throw new RuntimeException("Invalid move "+ action.move() + " for unit "+ action.unit().unitCode());
+
+        if (! board.buildFloor(action.unit().unitCode(),action.build()))
+            //LA TUA AI SI E' FATTA PIU' DI UNO SPINIELLO BRO
+            throw new RuntimeException("Invalid build "+ action.build() + " for unit "+ action.unit().unitCode());
+
         board.display();
 
     }

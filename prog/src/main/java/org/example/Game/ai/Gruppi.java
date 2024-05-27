@@ -98,7 +98,7 @@ public class Gruppi {
     //--ADD UNITS
         for (Player p : GameHandler.getBoard().getPlayers() ){
             for (Player.unit unit : p.getUnits()){
-                handler.addFactAsObject(new unitASP(unit.coord().x, unit.coord().y, player.getPlayerCode()));
+                handler.addFactAsObject(new unitASP(unit.coord().x, unit.coord().y, p.getPlayerCode()));
             }
         }
 
