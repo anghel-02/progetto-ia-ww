@@ -1,12 +1,13 @@
-package org.example.Game;
+package org.example.Game.gameManager;
+
+import org.example.Game.mode.manual.PlayerManual;
 
 import java.awt.*;
 import java.util.Scanner;
 
 
-public class Input {
+class Input {
     private static final Scanner sc = new Scanner(System.in);
-
     private final static String ACTION_REGEX = "[0-"+(Board.ROW_SIZE-1)+"],[0-"+(Board.COL_SIZE-1)+"]";
 
 //--START GAME----------------------------------------------------------------------------------------------------------
@@ -24,7 +25,7 @@ public class Input {
 //--MANUAL INPUT--------------------------------------------------------------------------------------------------------
 
     //!!! Actually works only for single unit per player
-    static Point moveManual(Player player) {
+    static Point moveManual(PlayerManual player) {
         String toPrint = "Player " + player.getSymbol() + " moves to (x,y): ";
     //--INPUT
          System.out.print(toPrint);
@@ -37,13 +38,11 @@ public class Input {
         }
 
     //--CHECK
-        int unitCode = player.getFirstUnit().unitCode();
-
         Point move;
         int x = Integer.parseInt(moveStr.substring(0,1));
         int y = Integer.parseInt(moveStr.substring(2));
         move = new Point( x,y);
-        if (! GameHandler.getBoard().canMove(unitCode, move))
+        if (! GameHandler.board.canMove(player.getFirstUnit(), move))
             return moveManual(player);
 
 
@@ -52,7 +51,7 @@ public class Input {
 
 
     //!!! Actually works only for single unit per player
-    static Point buildManual(Player player) {
+    static Point buildManual(PlayerManual player) {
         String toPrint = "Player "+player.getSymbol()+ " builds at (x,y): ";
 
     //--INPUT
@@ -66,22 +65,16 @@ public class Input {
         }
 
     //--CHECK
-         int unitCode = player.getUnits().getFirst().unitCode();
-
          Point build;
          int x = Integer.parseInt(buildStr.substring(0,1));
          int y = Integer.parseInt(buildStr.substring(2));
          build = new Point(x,y);
 
-         if (! GameHandler.getBoard().canBuild(unitCode, build))
+         if (! GameHandler.board.canBuild(player.getFirstUnit(), build))
              return buildManual(player);
 
          return build;
 
     }
 
-//--AI INPUT--------------------------------------------------------------------------------------------------------
-    static actionSet inputAI(Player player){
-        return null;
-    }
 }

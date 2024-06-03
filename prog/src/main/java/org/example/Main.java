@@ -1,8 +1,8 @@
 package org.example;
 
-import org.example.Game.Board;
+import org.example.Game.mode.ai.PlayerAi;
 import org.example.embAsp.MyHandler;
-import org.example.Game.GameHandler;
+import org.example.Game.gameManager.GameHandler;
 
 
 import java.util.Scanner;
@@ -11,11 +11,15 @@ import java.util.Scanner;
 public class Main {
     private static final Scanner sc = new Scanner(System.in);
 
-
-
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
     //--SET PATH TO DLV2
         MyHandler.setRelPathToDLV2(Settings.PATH_TO_DLV2);
+
+//!!!!!TEST AI con BRUTE FORCE, DA TOGLIERE
+//COMMENTARE SE NON SI VUOLE ESEGUIRE TEST
+//        GameHandler.testAiBruteForce();
+
+
 
 
 
@@ -25,77 +29,52 @@ public class Main {
 
         String  choice =  sc.next();
 
-        switch (choice) {
-            case "0":
-                GameHandler.runManual();
-                break;
-            case "1":
-                String folderPath1 , folderPath2;
-                int groupID1, groupID2;
-
-                System.out.println("Scegliere quali gruppi si scontreranno tra {1-2-3-4}");
-                //TODO: implementare check su scelta gruppi
-                System.out.print("Gruppo: ");
-                String group= sc.next();
-                switch (group){
-                    case "1":
-                        folderPath1 = Settings.PATH_TO_GROUP1;
-                        groupID1 = 1;
-                        break;
-                    case "2":
-                        folderPath1 = Settings.PATH_TO_GROUP2;
-                        groupID1 = 2;
-                        break;
-                    case "3":
-                        folderPath1 = Settings.PATH_TO_GROUP3;
-                        groupID1 = 3;
-                        break;
-                    case "4":
-                        folderPath1 = Settings.PATH_TO_GROUP4;
-                        groupID1 = 4;
-                        break;
-                    default:
-                        System.out.println("Scelta non valida");
-                        main(args);
-                        return;
-                }
-
-                System.out.print("vs Gruppo: ");
-                group= sc.next();
-                switch (group){
-                    case "1":
-                        folderPath2 = Settings.PATH_TO_GROUP1;
-                        groupID2 = 1;
-                        break;
-                    case "2":
-                        folderPath2 = Settings.PATH_TO_GROUP2;
-                        groupID2 = 2;
-                        break;
-                    case "3":
-                        folderPath2 = Settings.PATH_TO_GROUP3;
-                        groupID2 = 3;
-                        break;
-                    case "4":
-                        folderPath2 = Settings.PATH_TO_GROUP4;
-                        groupID2 = 4;
-                        break;
-                    default:
-                        System.out.println("Scelta non valida");
-                        main(args);
-                        return;
-                }
-
-
-
-
-
-                GameHandler.runAI(folderPath1, folderPath2, groupID1, groupID2);
-                break;
-            default:
-                System.out.println("Scelta non valida");
-                main(args);
+        if (choice.equals("1") ) {
+            int[] groupID = input();
+            GameHandler.runAI(groupID[0],groupID[1]);
         }
 
+        else if (choice.equals("0"))
+            GameHandler.runManual();
+        else{
+            System.out.println("Scelta non valida");
+            main(args);
+        }
 
+    }
+
+    private static int[] input(){
+        int[] groupID = new int[2];
+
+        System.out.println("Scegliere quali gruppi si scontreranno tra {1-2-3-4}");
+        //TODO: implementare check su scelta gruppi
+
+        System.out.print("Gruppo: ");
+        String group= sc.next();
+        switch (group) {
+            case "1" -> groupID[0] = PlayerAi.GROUP_1;
+            case "2" -> groupID[0] = PlayerAi.GROUP_2;
+            case "3" -> groupID[0] = PlayerAi.GROUP_3;
+            case "4" -> groupID[0] = PlayerAi.GROUP_4;
+            default -> {
+                System.out.println("\nScelta non valida");
+                return input();
+            }
+        }
+
+        System.out.print("vs Gruppo: ");
+        group= sc.next();
+        switch (group) {
+            case "1" -> groupID[1] = PlayerAi.GROUP_1;
+            case "2" -> groupID[1] = PlayerAi.GROUP_2;
+            case "3" -> groupID[1] = PlayerAi.GROUP_3;
+            case "4" -> groupID[1] = PlayerAi.GROUP_4;
+            default -> {
+                System.out.println("\nScelta non valida\n");
+                return input();
+            }
+        }
+
+        return groupID;
     }
 }

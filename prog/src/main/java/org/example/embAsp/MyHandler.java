@@ -13,9 +13,9 @@ import it.unical.mat.embasp.languages.asp.AnswerSets;
 import it.unical.mat.embasp.platforms.desktop.DesktopHandler;
 import it.unical.mat.embasp.platforms.desktop.DesktopService;
 import it.unical.mat.embasp.specializations.dlv2.desktop.DLV2DesktopService;
-import org.example.Settings;
 
 import java.util.Set;
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -28,12 +28,11 @@ public class MyHandler {
     private DesktopService service;
     private Handler handler;
 
-    private InputProgram facts;
-    private InputProgram enconding;
+    private final ASPInputProgram facts =  new ASPInputProgram();
+    private ASPInputProgram enconding = new ASPInputProgram();
 
     
-    private Output output;
-    private AnswerSets answerSets;
+    private Output output=null;
     private OptionDescriptor option;
     private Integer OPTION_ID_n0 = null ;
 
@@ -47,7 +46,7 @@ public class MyHandler {
     public MyHandler(String encodingPath){
         initEmbAsp();
         option = new OptionDescriptor("-n 0");
-        addEncoding(encodingPath);
+        addEncodingPath(encodingPath);
     }
 
 
@@ -57,8 +56,8 @@ public class MyHandler {
         }
         service = new DLV2DesktopService(REL_PATH_TO_DLV2);
         handler = new DesktopHandler(service);
-        facts = new ASPInputProgram();
-        enconding = new ASPInputProgram();
+        handler.addProgram(facts);
+        handler.addProgram(enconding);
     }
 
 //--GETTERS & SETTERS---------------------------------------------------------------------------------------------------
@@ -70,6 +69,22 @@ public class MyHandler {
     public static void setRelPathToDLV2(String path){
         REL_PATH_TO_DLV2 = path;
     }
+
+    public void setFactProgram(ASPInputProgram program){
+        facts.clearAll();
+        for (String path: program.getFilesPaths())
+            facts.addFilesPath(path);
+        facts.setPrograms(program.getPrograms());
+    }
+
+    public void setEncoding(ASPInputProgram program){
+        enconding.clearAll();
+        for (String path: program.getFilesPaths())
+            enconding.addFilesPath(path);
+        enconding.setPrograms(program.getPrograms());
+    }
+
+
 
 //-----------------METHODS----------------------------------------
 
@@ -168,15 +183,16 @@ public class MyHandler {
      * Add an encoding file (ASP program). <p>
      * @param encodingPath path relative to the project root
      */
-    public void addEncoding(String encodingPath) {
+    public void addEncodingPath(String encodingPath) {
         if (encodingPath == null || encodingPath.isEmpty())
             throw new RuntimeException("Encoding path is null or empty");
         enconding.addFilesPath(encodingPath);
     }
 
-    public void addInputProgram(InputProgram program){
-        enconding = program;
-    }
+//    public void addFactProgram(ASPInputProgram program){
+//        handler.addProgram(program);
+//    }
+
 
 //--SOLVE-------------------------------------------------------------------------------------------------------------
 
@@ -186,19 +202,20 @@ public class MyHandler {
      * Call this method before {@code getOutput}.
      */
     public void startSync() {
-        if (enconding.getFilesPaths().isEmpty())
-            throw new RuntimeException("Encoding not found, please add encoding file with addEncoding method");
-
-        handler.addProgram(enconding);
-
-        if (! facts.getPrograms().isEmpty())
-            handler.addProgram(facts);
+        if (enconding.getFilesPaths().isEmpty() && enconding.getPrograms().isEmpty())
+            throw new RuntimeException("Encoding not found, please add encoding");
 
         output = handler.startSync();
+        System.out.println("\n");
+
         if (! output.getErrors().isEmpty())
             throw new RuntimeException("Errors in output: "+ output.getErrors());
+        if (isIncoherent())
+            throw new RuntimeException("Incoherent output");
+        if (isSafetyError())
+            throw new RuntimeException("Safety error " + output.getOutput());
 
-
+        facts.clearAll();
     }
 
 
@@ -215,11 +232,41 @@ public class MyHandler {
         return output;
     }
 
-    public boolean isIncoherent(){
+    public AnswerSets getAnswerSets(){
+        if (output == null)
+            throw new RuntimeException("Output is null, maybe startSync methods was never launched");
+        return (AnswerSets) output;
+    }
+
+    public List<AnswerSet> getAnswerSetsList(){
+        if(getAnswerSets().getAnswersets().isEmpty())
+            throw new RuntimeException("AnswerSets list is empty: " );
+
+        return ((AnswerSets) output).getAnswersets();
+    }
+
+    private boolean isIncoherent(){
+        if (output == null)
+            throw new RuntimeException("Output is null, maybe startSync methods was never launched");
         return output.getOutput().matches("DLV 2.1.2\n" +
                 "\n" +
                 "INCOHERENT\n");
     }
+
+    private boolean isSafetyError(){
+        if (output == null)
+            throw new RuntimeException("Output is null, maybe startSync methods was never launched");
+        return output.getOutput().contains("--> Safety Error");
+    }
+
+    private boolean isEmpty(){
+        if (output == null)
+            throw new RuntimeException("Output is null, maybe startSync methods was never launched");
+        return ((AnswerSets)output).getAnswersets().isEmpty();
+    }
+
+
+
 
 
 

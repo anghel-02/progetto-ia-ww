@@ -1,9 +1,23 @@
-package org.example.Game;
+package org.example.Game.mode.ai;
+
+import org.example.Game.gameManager.Board;
+import org.example.Game.mode.Unit;
 
 import java.awt.*;
 
-public record actionSet(Player player, Player.unit unit , Point move, Point build) {
-    public actionSet {
+public record actionSet(PlayerAi player, Unit unit , Point move, Point build) {
+     public actionSet {
+        if (player == null || unit == null || move == null || build == null) {
+            String nullArgs = "";
+            if (player == null) nullArgs += " player ";
+            if (unit == null) nullArgs += " unit ";
+            if (move == null) nullArgs += " move ";
+            if (build == null) nullArgs += " build ";
+
+
+            throw new NullPointerException("null values are not allowed, Null arguments: "+ nullArgs );
+        }
+
         if (player.getPlayerCode() < 0 || player.getPlayerCode() > 1) {
             throw new IllegalArgumentException("playerCode must be 0 or 1");
         }
