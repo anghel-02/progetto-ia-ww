@@ -4,21 +4,22 @@ import java.awt.*;
 
 public class Unit {
     final int unitCode;
-    final int playerCode;
+    final Player player;
     final Point coord;
 
-    Unit(int unitCode, int playerCode, Point coord) {
+    Unit(int unitCode, Player player, Point coord) {
         this.unitCode = unitCode;
-        this.playerCode = playerCode;
+        this.player = player;
         this.coord = coord;
     }
+
 
     public int unitCode() {
         return unitCode;
     }
 
-    public int playerCode() {
-        return playerCode;
+    public Player player() {
+        return player;
     }
 
     public Point coord() {

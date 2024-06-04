@@ -133,8 +133,13 @@ public class PlayerAi extends Player implements Callable<actionSet> {
     //--
         Point move = null;
         Point build= null;
-        for (AnswerSet answerSet: handler.getAnswerSetsList()) {
-             for (Object obj :answerSet.getAtoms()){
+        for (AnswerSet answerSet: handler.getOptimalAnswerSet()) {
+        //--IF CAN'T PERFORM ANY ACTION
+            if (answerSet.getAtoms().isEmpty())
+                return new actionSet(myUnit); //nullAction = true
+
+        //--ELSE
+            for (Object obj :answerSet.getAtoms()){
                 if(obj instanceof moveIn)
                     move = new Point(((moveIn) obj).getX(), ((moveIn) obj).getY());
                 else if(obj instanceof buildIn)
@@ -142,9 +147,10 @@ public class PlayerAi extends Player implements Callable<actionSet> {
 
              }
         }
+        
 
 
-        return new actionSet(this, myUnit, move, build);
+        return new actionSet( myUnit, move, build);
     }
 
 //--UTILITY METHODS-----------------------------------------------------------------------------------------------------

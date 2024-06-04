@@ -49,7 +49,7 @@ public abstract class Player {
         if (Units.size() > Board.UNIT_PER_PLAYER) {
             throw new IllegalStateException("Player already has the maximum number of units");
         }
-        Units.add(new Unit(++NEXT_UNIT_CODE, this.playerCode, coord));
+        Units.add(new Unit(++NEXT_UNIT_CODE, this, coord));
 
 
         return NEXT_UNIT_CODE;

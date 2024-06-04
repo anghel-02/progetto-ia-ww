@@ -29,7 +29,7 @@ public class Board {
 //    private final HashMap<Integer, Point> unitCoord = new HashMap<>(); // unitCode, coord
 
     //    private final Object lock;
-    private boolean isTerminated = false;
+    private boolean win = false;
 
     //--CONSTRUCTOR---------------------------------------------------------------------------------------------------------
     Board(Player[] players) {
@@ -63,12 +63,14 @@ public class Board {
         return players;
     }
 
-    public boolean isTerminated() {
-        return isTerminated;
+    public boolean Win() {
+        return win;
+    }
+    public void setWin() {
+        win = true;
     }
 
 //--UTILITY--------------------------------------------------------------------------------------------------------------
-
     /**
      * Check if the cell is occupied by a unit.
      * @param coord
@@ -242,11 +244,11 @@ public class Board {
      */
     public boolean moveUnitSafe(Unit unit , Point coord){
         if (canMove(unit,coord)){
-            players[unit.playerCode()].moveUnitSafe(unit,coord);
+            players[unit.player().getPlayerCode()].moveUnitSafe(unit,coord);
 
             //--WIN
             if (grid[coord.x][coord.y] == FLOOR_HEIGHT_3){
-                isTerminated = true;
+                win = true;
             }
 
             return true;

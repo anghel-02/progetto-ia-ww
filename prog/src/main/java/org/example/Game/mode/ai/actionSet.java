@@ -5,11 +5,23 @@ import org.example.Game.mode.Unit;
 
 import java.awt.*;
 
-public record actionSet(PlayerAi player, Unit unit , Point move, Point build) {
-     public actionSet {
-        if (player == null || unit == null || move == null || build == null) {
+public class actionSet {
+    private final Unit unit;
+    private final Point move;
+    private final Point build;
+    private boolean nullAction = false;
+
+//--CONSTRUCTOR---------------------------------------------------------------------------------------------------------
+
+    /**
+     * Construct a non {@code nullAction} actionSet.
+     * @param unit
+     * @param move
+     * @param build
+     */
+    public actionSet(Unit unit, Point move, Point build) {
+        if (unit == null || move == null || build == null) {
             String nullArgs = "";
-            if (player == null) nullArgs += " player ";
             if (unit == null) nullArgs += " unit ";
             if (move == null) nullArgs += " move ";
             if (build == null) nullArgs += " build ";
@@ -18,23 +30,64 @@ public record actionSet(PlayerAi player, Unit unit , Point move, Point build) {
             throw new NullPointerException("null values are not allowed, Null arguments: "+ nullArgs );
         }
 
-        if (player.getPlayerCode() < 0 || player.getPlayerCode() > 1) {
+        if (unit.player().getPlayerCode() < 0 || unit.player().getPlayerCode() > 1) {
             throw new IllegalArgumentException("playerCode must be 0 or 1");
         }
 
         if (move.x < 0 || move.x > Board.ROW_SIZE-1 || move.y < 0 || move.y > Board.COL_SIZE-1 ) {
             throw new IllegalArgumentException("move coordinates must be between 0" + (Board.ROW_SIZE-1)+"and" + (Board.COL_SIZE-1));
         }
+
+        if (build.x < 0 || build.x > Board.ROW_SIZE-1 || build.y < 0 || build.y > Board.COL_SIZE-1 ) {
+            throw new IllegalArgumentException("build coordinates must be between 0" + (Board.ROW_SIZE-1)+"and" + (Board.COL_SIZE-1));
+        }
+
+        this.unit = unit;
+        this.move = move;
+        this.build = build;
     }
 
+    /**
+     * Construct a {@code nullAction} actionSet.
+     */
+    public actionSet(Unit unit){
+        this.unit = unit;
+        this.move = null;
+        this.build = null;
+        nullAction = true;
+    }
+
+    public static actionSet copyOf(actionSet a){
+        return new actionSet(a.unit, a.move, a.build);
+    }
+
+//--GETTERS & SETTERS---------------------------------------------------------------------------------------------------
+    public Unit unit() {
+        return unit;
+    }
+
+    public Point move() {
+        return move;
+    }
+
+    public Point build() {
+        return build;
+    }
+
+    public boolean isNullAction() {
+        return nullAction;
+    }
+
+
+//--UTILITY-------------------------------------------------------------------------------------------------------------
     public String display() {
-        return "\nPlayer " + player.getSymbol() + " moves to ("+ move.x + "," + move.y +") and builds at (" + build.x + "," + build.y + ")";
+        return "\nPlayer " + unit.player().getSymbol() + " moves to ("+ move.x + "," + move.y +") and builds at (" + build.x + "," + build.y + ")";
     }
 
     @Override
     public String toString() {
         return " actionSet(" +
-                player.getPlayerCode() +
+                unit.player().getPlayerCode() +
                 ", " +
                 "(" + move.x + "," + move.y + ")" +
                 "," +

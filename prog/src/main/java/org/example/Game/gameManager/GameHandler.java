@@ -10,7 +10,6 @@ import org.example.embAsp.cell;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -73,19 +72,10 @@ public class GameHandler {
     //--THREADS
         ExecutorService executorService=Executors.newFixedThreadPool(2);
         try {
-            while (true){
+            while (! board.Win()){
                 for (Player p : players) {
                     actionSet action = executorService.submit((PlayerAi) p).get();
                     playTurn(action);
-
-
-                    if (board.isTerminated()){
-                        for (int i = 0; i < 50; i++) {
-                            System.out.print("*");
-                        }
-                        System.out.println("\nPLAYER "+ p.getSymbol() + " WINS!");
-                        return;
-                    }
 
 //                    Thread.sleep(500);
 
@@ -128,7 +118,7 @@ public class GameHandler {
                     board.display();
 
                 //--EXIT
-                    if (board.isTerminated()){
+                    if (board.Win()){
                         return;
                     }
                 }
@@ -168,7 +158,15 @@ public class GameHandler {
 
     private static synchronized void playTurn(actionSet action) throws Exception {
         System.out.print( action.display());
-    //TODO: RIMUOVERE IF AL TERMINE DELLA FASE DI SVILUPPO O COMUNQUE NON SERVONO PIU
+    //--WIN CONDITION -> can not make action
+        if (action.isNullAction()){
+            board.setWin();
+            System.out.println("\nPLAYER "+ action.unit().player().getSymbol() + "LOSE. CAN'T MAKE ANY ACTION!");
+            return;
+        }
+
+    //--MOVE AND BUILD
+        //TODO: RIMUOVERE IF AL TERMINE DELLA FASE DI SVILUPPO O COMUNQUE NON SERVONO PIU
         if(! board.moveUnitSafe(action.unit(), action.move()))
             //LA TUA AI SI E' FATTA UNO SPINIELLO BRO
             throw new RuntimeException("Invalid move "+ action.move() + " for unit "+ action.unit().unitCode());
@@ -178,6 +176,15 @@ public class GameHandler {
             throw new RuntimeException("Invalid build "+ action.build() + " for unit "+ action.unit().unitCode());
 
         board.display();
+
+    //--WIN CONDITION -> unit on height 3
+        if (board.Win()){
+            for (int i = 0; i < 50; i++) {
+                System.out.print("*");
+            }
+            System.out.println("\nPLAYER "+ action.unit().player().getSymbol() + " WINS!");
+            return;
+        }
 
     //--REFRESH GRID STATE
         refreshGridState();
@@ -223,11 +230,7 @@ public class GameHandler {
                     playTurn(action);
 
 
-                    if (board.isTerminated()){
-                        for (int i = 0; i < 50; i++) {
-                            System.out.print("*");
-                        }
-                        System.out.println("\nPLAYER "+ p.getSymbol() + " WINS!");
+                    if (board.Win()){
                         testAiBruteForce();
                         return;
                     }
