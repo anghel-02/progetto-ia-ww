@@ -13,8 +13,8 @@ import it.unical.mat.embasp.platforms.desktop.DesktopHandler;
 import it.unical.mat.embasp.platforms.desktop.DesktopService;
 import it.unical.mat.embasp.specializations.dlv2.desktop.DLV2DesktopService;
 
-import java.util.Set;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -31,7 +31,7 @@ public class MyHandler {
     private int factKey = 0;
     private ASPInputProgram enconding = new ASPInputProgram();
 
-    
+
     private Output output=null;
     private OptionDescriptor option;
     private Integer OPTION_ID_n0 = null ;
@@ -48,6 +48,10 @@ public class MyHandler {
         initEmbAsp();
         setFactProgram(handler.facts);
         setEncoding(handler.enconding);
+        if (! handler.option.getOptions().isEmpty())
+            option = new OptionDescriptor(option.getOptions());
+
+
     }
 
     public MyHandler(String encodingPath){
@@ -91,7 +95,9 @@ public class MyHandler {
         enconding.setPrograms(program.getPrograms());
     }
 
-
+    public String getFactsString(){
+        return facts.getPrograms();
+    }
 
 //-----------------METHODS----------------------------------------
 
@@ -134,34 +140,34 @@ public class MyHandler {
         // fact(1)
         String intOrSymConst = "(-?\\d+|[a-zA-Z]+)";
         Pattern atom1 = Pattern.compile(predicate.pattern() + "\\("+ intOrSymConst + "\\)" );
-        // fact(1,...)  
+        // fact(1,...)
         String intOrSymConst_comma = "((-?\\d+|[a-zA-Z]+),)+";
-        Pattern atomN = Pattern.compile(predicate.pattern() + 
+        Pattern atomN = Pattern.compile(predicate.pattern() +
                         "\\(" + intOrSymConst_comma + intOrSymConst + "\\)" );
-        
+
 
         if( s.matches(atomN.pattern()) || s.matches(atom1.pattern()) || s.matches(predicate.pattern()) )
             return true;
-        
+
         return false;
     }
 
     /**
      * Add a fact accepting as parameter a {@code String}. <p>
-     * The string must be in the form of a fact without '.' , for example: 
+     * The string must be in the form of a fact without '.' , for example:
      * "fact" or "fact(1)" or "fact(1,a)". <p>
-     * Actually string constants are not accepted, only integer and SymbolicConstant;  
+     * Actually string constants are not accepted, only integer and SymbolicConstant;
      * so fact("s") isn't valid.<p>
-     * 
+     *
      * @param s - fact to add
      * @throws Exception if string is not valid
      */
     public void addFactAsString(String s) throws Exception {
         if (! checkFactString(s))
             throw new Exception("String is not valid");
-   
+
         facts.addProgram(s+".");
-        
+
     }
 
     /**
@@ -175,7 +181,7 @@ public class MyHandler {
             throw new Exception("Object is null");
 
         facts.addObjectInput(o);
-        
+
     }
 
     public void addFactsAsObjectSet(Set<Object> objects) throws Exception {
@@ -183,11 +189,11 @@ public class MyHandler {
             throw new Exception("Object is null");
 
         facts.addObjectsInput(objects);
-        
+
     }
 
     /**
-     * Add an encoding file (ASP program). <p>
+     * Add an encoding path to {@code ASPInputProgram encoding} . <p>
      * @param encodingPath path relative to the project root
      */
     public void addEncodingPath(String encodingPath) {
@@ -206,7 +212,7 @@ public class MyHandler {
 
     /**
      * Start the solving process. <p>
-     * Call this method before {@code getOutput}.
+     * Call this method before {@code getOutput}.<p>
      */
     public void startSync() {
         if (enconding.getFilesPaths().isEmpty() && enconding.getPrograms().isEmpty())
@@ -280,14 +286,6 @@ public class MyHandler {
             throw new RuntimeException("Output is null, maybe startSync methods was never launched");
         return ((AnswerSets)output).getAnswersets().isEmpty();
     }
-
-
-
-
-
-
-
-
 
 
 }

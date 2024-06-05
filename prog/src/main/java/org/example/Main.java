@@ -1,9 +1,8 @@
 package org.example;
 
+import org.example.Game.gameManager.GameHandler;
 import org.example.Game.mode.ai.PlayerAi;
 import org.example.embAsp.MyHandler;
-import org.example.Game.gameManager.GameHandler;
-
 
 import java.util.Scanner;
 
@@ -17,10 +16,7 @@ public class Main {
 
 //!!!!!TEST AI con BRUTE FORCE, DA TOGLIERE
 //COMMENTARE SE NON SI VUOLE ESEGUIRE TEST
-        GameHandler.testAiBruteForce();
-
-
-
+//        GameHandler.testAiBruteForce();
 
 
     //--

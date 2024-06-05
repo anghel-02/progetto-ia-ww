@@ -1,8 +1,7 @@
 package org.example.Game.mode;
 
-import org.example.Game.mode.ai.PlayerAi;
-
 import java.awt.*;
+import java.util.Objects;
 
 public class Unit {
     final int unitCode;
@@ -11,14 +10,8 @@ public class Unit {
 
     public Unit(int unitCode, Player player, Point coord) {
         this.unitCode = unitCode;
-        this.player = player;
-        this.coord = coord;
-    }
-
-    public Unit(Unit unit) {
-        this.unitCode = unit.unitCode;
-        this.player = unit.player;
-        this.coord = new Point(unit.coord);
+        this.player = player.copy();
+        this.coord = new Point(coord);
     }
 
 
@@ -32,5 +25,18 @@ public class Unit {
 
     public Point coord() {
         return coord;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Unit unit = (Unit) o;
+        return unitCode == unit.unitCode && player.equals(unit.player) && coord.equals(unit.coord);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(unitCode, player, coord);
     }
 }

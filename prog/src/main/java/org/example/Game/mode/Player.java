@@ -1,12 +1,9 @@
 package org.example.Game.mode;
 
 import org.example.Game.gameManager.Board;
-import org.example.Game.mode.ai.PlayerAi;
-import org.example.Game.mode.manual.PlayerManual;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public abstract class Player {
     protected final char symbol;
@@ -24,15 +21,16 @@ public abstract class Player {
     }
 
     protected Player(Player player) {
-        this.symbol = player.symbol;
-        this.playerCode = player.playerCode;
-        this.Units = new ArrayList<>();
+        symbol = player.symbol;
+        playerCode = player.playerCode;
+        Units = new ArrayList<>();
         for (Unit u : player.Units) {
-            this.Units.add(new Unit(u));
+            Units.add(new Unit(u.unitCode, u.player, u.coord));
         }
     }
 
-    abstract public Player copy() ;
+    abstract public Player copy();
+
     public char getSymbol() {
         return symbol;
     }
@@ -93,7 +91,7 @@ public abstract class Player {
         checkUnitCode(unit.unitCode);
 
         for (Unit u : Units) {
-            if (u.equals(unit)) {
+            if (u.unitCode == unit.unitCode) {
                 return true;
             }
         }
@@ -124,7 +122,7 @@ public abstract class Player {
     public boolean moveUnitSafe(Unit unit, Point coord) {
         if (containsUnit(unit)){
             for (Unit u : Units) {
-                if (u.equals(unit)) {
+                if (u.unitCode == unit.unitCode) {
                     u.coord.setLocation(coord);
                     return true;
                 }
@@ -135,6 +133,11 @@ public abstract class Player {
 
 
     }
+
+    @Override
+    abstract public boolean equals(Object o);
+    @Override
+    abstract public int hashCode();
 
     //--CHECK EXEPTION------------------------------------------------------------------------------------------------------
     protected void checkUnitCode(int unitCode) {

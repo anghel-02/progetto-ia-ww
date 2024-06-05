@@ -4,12 +4,13 @@ import org.example.Game.gameManager.Board;
 import org.example.Game.mode.Unit;
 
 import java.awt.*;
+import java.util.Objects;
 
 public class actionSet {
     private final Unit unit;
     private final Point move;
     private final Point build;
-    private boolean nullAction = false;
+//    private boolean nullAction = false;
 
 //--CONSTRUCTOR---------------------------------------------------------------------------------------------------------
 
@@ -47,19 +48,10 @@ public class actionSet {
         this.build = build;
     }
 
-    /**
-     * Construct a {@code nullAction} actionSet.
-     */
-    public actionSet(Unit unit){
-        this.unit = unit;
-        this.move = null;
-        this.build = null;
-        nullAction = true;
-    }
-
-    public static actionSet copyOf(actionSet a){
-        return new actionSet(a.unit, a.move, a.build);
-    }
+//
+//    public static actionSet newNullAction(actionSet a){
+////        return new actionSet()
+//    }
 
 //--GETTERS & SETTERS---------------------------------------------------------------------------------------------------
     public Unit unit() {
@@ -74,9 +66,9 @@ public class actionSet {
         return build;
     }
 
-    public boolean isNullAction() {
-        return nullAction;
-    }
+//    public boolean isNullAction() {
+//        return nullAction;
+//    }
 
 
 //--UTILITY-------------------------------------------------------------------------------------------------------------
@@ -93,5 +85,18 @@ public class actionSet {
                 "," +
                 "("+build.x  + "," + build.y + ")"+
                 ") ";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        actionSet that = (actionSet) o;
+        return unit.equals(that.unit) && move.equals(that.move) && build.equals(that.build);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(unit, move, build);
     }
 }

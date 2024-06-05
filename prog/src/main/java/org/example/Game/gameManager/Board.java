@@ -4,9 +4,9 @@ import org.example.Game.mode.Player;
 import org.example.Game.mode.Unit;
 import org.example.embAsp.cell;
 
-import java.awt.Point;
-import java.lang.reflect.Array;
+import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Class that represents the game board.
@@ -25,19 +25,18 @@ public class Board {
     public static final int FLOOR_START= FLOOR_HEIGHT_0;
     public static final int FLOOR_REMOVED= FLOOR_HEIGHT_4;
 
-    private int[][] grid;
-    private final Player[] players;
+    private final int[][] grid;
+    private final Player[] players = new Player[N_PLAYERS];;
 //    private final HashMap<Integer, Point> unitCoord = new HashMap<>(); // unitCode, coord
 
     //    private final Object lock;
     private boolean win = false;
 
     //--CONSTRUCTOR---------------------------------------------------------------------------------------------------------
-    Board(Player[] players) {
+    Board(Player player1, Player player2) {
         grid = new int[ROW_SIZE][COL_SIZE];
-        this.players = new Player[N_PLAYERS];
-        this.players[0] = players[0];
-        this.players[1] = players[1];
+        this.players[0] = player1.copy();
+        this.players[1] = player2.copy();
 
         for (int i = 0; i < ROW_SIZE; i++) {
             for (int j = 0; j < ROW_SIZE; j++) {
@@ -48,10 +47,10 @@ public class Board {
 //        lock = new Object();
     }
 
-    public static Board copyOf(Board board){
-        Board myBoard= new Board(board.getPlayers());
-        myBoard.grid = board.grid;
-        myBoard.win = board.Win();
+    public Board copy(){
+        Board myBoard = new Board(players[0],players[1]);
+        myBoard.setGrid(grid);
+        myBoard.win = win;
         return myBoard;
     }
 
@@ -64,6 +63,12 @@ public class Board {
      */
     public int[][] getGrid() {
         return grid;
+    }
+
+    private void setGrid(int[][] grid){
+        for (int i = 0; i < ROW_SIZE; i++) {
+            this.grid[i] = Arrays.copyOf(grid[i], grid[i].length);
+        }
     }
 
     public Player[] getPlayers() {
@@ -198,7 +203,8 @@ public class Board {
 //--ACTIONS-------------------------------------------------------------------------------------------------------------
     public boolean moveUnitSafe(Unit unit , Point coord){
         if (canMove(unit,coord)){
-            players[unit.player().getPlayerCode()].moveUnitSafe(unit,coord);
+            if (!players[unit.player().getPlayerCode()].moveUnitSafe(unit,coord))
+                throw new RuntimeException("Qualcosa non va ");
 
             //--WIN
             if (grid[coord.x][coord.y] == FLOOR_HEIGHT_3)
@@ -241,7 +247,7 @@ public class Board {
 
         //The unit may only move on the same level, step up one level or step down any number of levels.
         if (grid[toMove.x][toMove.y] - grid[unitCoord.x][unitCoord.y] > 1){
-            System.out.println("NOT VALID! floor too high");
+//            System.out.println("NOT VALID! floor too high");
             return false;
         }
 
@@ -265,25 +271,25 @@ public class Board {
 
         //--A unit cannot make action to the same cell it is currently in.
         if (start.equals(end)){
-            System.out.println("NOT VALID! same cell");
+//            System.out.println("NOT VALID! same cell");
             return false;
         }
 
         //--Can make action to any neighboring cell, including diagonals.
         if( Math.abs(toX -currentX)  > 1 || Math.abs(toY-currentY)  > 1){
-            System.out.println("NOT VALID! too far away");
+//            System.out.println("NOT VALID! too far away");
             return false;
         }
 
         //--A unit cannot make action to a cell that is occupied by another unit.
         if (isOccupied(toX,toY)){
-            System.out.println("NOT VALID! cell occupied");
+//            System.out.println("NOT VALID! cell occupied");
             return false;
         }
 
         //--If the height reaches level 4, the cell is considered removed from play.
         if (grid[toX][toY] == FLOOR_REMOVED){
-            System.out.println("NOT VALID! floor removed");
+//            System.out.println("NOT VALID! floor removed");
             return false;
         }
 
@@ -355,20 +361,20 @@ public class Board {
         int x = coord.x;
         int y = coord.y;
 
-        // up
-        area.add(new Point(x,y-1));
-        // up right
-        area.add(new Point(x+1,y-1));
+        //up
+        area.add(new Point(x-1,y));
+        //up right
+        area.add(new Point(x-1,y+1));
         // right
-        area.add( new Point(x+1,y));
+        area.add( new Point(x,y+1));
         // down right
         area.add( new Point(x+1,y+1));
         // down
-        area.add(new Point(x,y+1));
+        area.add(new Point(x+1,y));
         // down left
-        area.add( new Point(x-1,y+1));
+        area.add( new Point(x+1,y-1));
         // left
-        area.add(new Point(x-1,y));
+        area.add(new Point(x,y-1));
         // up left
         area.add(new Point(x-1,y-1));
 

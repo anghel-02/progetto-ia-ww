@@ -2,6 +2,7 @@ package org.example.Game.gameManager;
 
 
 import org.example.Game.mode.Player;
+import org.example.Game.mode.ai.NullAction;
 import org.example.Game.mode.ai.PlayerAi;
 import org.example.Game.mode.ai.actionSet;
 import org.example.Game.mode.manual.PlayerManual;
@@ -23,7 +24,7 @@ public class GameHandler {
 
     static Board board ;
 
-    private static Player[] players ;
+//    private static Player[] players ;
 
 //--RUN METHODS--------------------------------------------------------------------------------------------------------
     public static Board getBoard(){
@@ -35,10 +36,9 @@ public class GameHandler {
     public static void runAI(int groupID1, int groupID2) throws Exception {
     //--CREATE PLAYERS
         char [] symbols = Input.startInput();
-        players = new PlayerAi[Board.N_PLAYERS];
-        players[0] = new PlayerAi(symbols[0], 0, groupID1);
-        players[1] = new PlayerAi(symbols[1], 1, groupID2);
-        initGame();
+        PlayerAi player1 = new PlayerAi(symbols[0], 0, groupID1);
+        PlayerAi player2 = new PlayerAi(symbols[1], 1, groupID2);
+        initGame(player1,player2);
         refreshGridState();
 
     //--JUST AESTHETIC
@@ -76,7 +76,7 @@ public class GameHandler {
         try {
     //--GAMELOOP
             while (! board.Win()){
-                for (Player p : players) {
+                for (Player p : board.getPlayers()) {
                     actionSet action = executorService.submit((PlayerAi) p).get();
                     playTurn(action);
 
@@ -96,11 +96,10 @@ public class GameHandler {
     //!!!Actually works only for single unit per player
     public static void runManual(){
         char [] symbols = Input.startInput();
-        players = new Player[Board.N_PLAYERS];
-        players[0]= new PlayerManual(symbols[0], 0);
-        players[1]= new PlayerManual(symbols[1], 1);
+        PlayerManual player1= new PlayerManual(symbols[0], 0);
+        PlayerManual player2= new PlayerManual(symbols[1], 1);
 
-        initGame();
+        initGame(player1,player2);
 
         System.out.println("---MANUAL MODE---");
         board.display();
@@ -108,7 +107,7 @@ public class GameHandler {
     //--1 UNIT PER PLAYER
         if (Board.UNIT_PER_PLAYER ==1){
             while (true){
-                for ( Player p : players) {
+                for ( Player p : board.getPlayers()) {
                 //--MOVE
                     board.moveUnitSafe(p.getFirstUnit(), Input.moveManual((PlayerManual) p));
                 //--DISPLAY
@@ -136,9 +135,9 @@ public class GameHandler {
 
 //--GAME METHODS--------------------------------------------------------------------------------------------------------
 
-    private static void initGame(){
+    private static void initGame(Player player1, Player player2) {
     //--ADD PLAYERS
-        board = new Board(players);
+        board = new Board(player1, player2);
 
     //--RANDOM SET UNIT POSITION
         Random rand = new Random();
@@ -161,7 +160,7 @@ public class GameHandler {
 
     private static synchronized void playTurn(actionSet action) throws Exception {
     //--WIN CONDITION -> can not make action
-        if (action.isNullAction()){
+        if (action instanceof NullAction){
             board.setWin();
             System.out.println("\nPLAYER "+ action.unit().player().getSymbol() + "LOSE. CAN'T MAKE ANY ACTION!");
             return;
@@ -170,12 +169,15 @@ public class GameHandler {
         System.out.print( action.display());
     //--MOVE AND BUILD
         //TODO: RIMUOVERE IF AL TERMINE DELLA FASE DI SVILUPPO O COMUNQUE NON SERVONO PIU
-        if(! board.moveUnitSafe(action.unit(), action.move()))
-            //LA TUA AI SI E' FATTA UNO SPINIELLO BRO
-            throw new RuntimeException("Invalid move "+ action.move() + " for unit "+ action.unit().unitCode());
+        if(! board.moveUnitSafe(action.unit(), action.move())) {
 
+            //LA TUA AI SI E' FATTA UNO SPINIELLO BRO
+            throw new RuntimeException("Invalid move " + action.move() + " for unit " + action.unit().unitCode());
+
+        }
         if (! board.buildFloor(action.unit(),action.build()))
             //LA TUA AI SI E' FATTA PIU' DI UNO SPINIELLO BRO
+
             throw new RuntimeException("Invalid build "+ action.build() + " for unit "+ action.unit().unitCode());
 
         board.display();
@@ -214,10 +216,9 @@ public class GameHandler {
     //TODO: rimuovere dopo sviluppo
     public static void testAiBruteForce() throws Exception {
         char [] symbols = {'a','b'};
-        players = new PlayerAi[Board.N_PLAYERS];
-        players[0] = new PlayerAi(symbols[0], 0, PlayerAi.GROUP_1);
-        players[1] = new PlayerAi(symbols[1], 1 , PlayerAi.GROUP_1);
-        initGame();
+        PlayerAi player1= new PlayerAi(symbols[0], 0, PlayerAi.GROUP_1);
+        PlayerAi player2 = new PlayerAi(symbols[1], 1 , PlayerAi.GROUP_1);
+        initGame(player1,player2);
         refreshGridState();
 
 
@@ -228,7 +229,7 @@ public class GameHandler {
         ExecutorService executorService=Executors.newFixedThreadPool(2);
         try {
             while (true){
-                for (Player p : players) {
+                for (Player p : board.getPlayers()) {
                     actionSet action = executorService.submit((PlayerAi) p).get();
                     playTurn(action);
 

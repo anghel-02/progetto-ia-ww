@@ -1,20 +1,22 @@
 package org.example.Game.mode.ai;
 
 
-
 import it.unical.mat.embasp.languages.asp.ASPInputProgram;
 import org.example.Game.mode.Player;
 import org.example.Settings;
-import org.example.embAsp.*;
+import org.example.embAsp.Group;
+import org.example.embAsp.WondevWomanHandler;
+import org.example.embAsp.cell;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.stream.Stream;
 
@@ -80,10 +82,12 @@ public class PlayerAi extends Player implements Callable<actionSet> {
 
 
     @Override
-    public Player copy() {
+    public PlayerAi copy() {
         return new PlayerAi(this);
     }
-//--GETTERS AND SETTERS--------------------------------------------------------------------------------------------------
+
+
+    //--GETTERS AND SETTERS--------------------------------------------------------------------------------------------------
     public ArrayList<ASPInputProgram> getEncodings() {
         return encodings;
     }
@@ -218,11 +222,28 @@ public class PlayerAi extends Player implements Callable<actionSet> {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-
-
-
     }
 
 
+
+    //--JAVA UTILITY--------------------------------------------------------------------------------------------------------
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof PlayerAi playerAi)) return false;
+
+        if (playerCode != playerAi.playerCode) return false;
+        if (symbol != playerAi.symbol) return false;
+        if (!encodings.equals(playerAi.encodings)) return false;
+        if (!handler.equals(playerAi.handler)) return false;
+        if (!encPath.equals(playerAi.encPath)) return false;
+        if (!embAspPath.equals(playerAi.embAspPath)) return false;
+        if (!embAspPackage.equals(playerAi.embAspPackage)) return false;
+        return myGroup.equals(playerAi.myGroup);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(encodings, handler, encPath, embAspPath, embAspPackage, myGroup);
+    }
 }

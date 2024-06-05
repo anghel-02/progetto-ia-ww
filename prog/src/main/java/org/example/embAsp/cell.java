@@ -3,7 +3,6 @@ package org.example.embAsp;
 import it.unical.mat.embasp.languages.Id;
 import it.unical.mat.embasp.languages.Param;
 
-import javax.naming.InvalidNameException;
 import java.util.Objects;
 
 @Id("cell") //%cell(X,Y,H,P))
