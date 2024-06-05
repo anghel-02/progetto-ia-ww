@@ -15,3 +15,8 @@ moveIn(X,Y) | moveOut(X,Y) :- moveCell(X,Y).
 % can choose only one cell
 :- #count{X,Y : moveIn(X,Y)} <> 1.
 
+
+%%WEAK
+% prefer to move to a height 3 cell
+
+

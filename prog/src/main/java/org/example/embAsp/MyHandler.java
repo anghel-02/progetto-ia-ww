@@ -49,7 +49,7 @@ public class MyHandler {
         setFactProgram(handler.facts);
         setEncoding(handler.enconding);
         if (! handler.option.getOptions().isEmpty())
-            option = new OptionDescriptor(option.getOptions());
+            option = new OptionDescriptor(handler.option.getOptions());
 
 
     }
