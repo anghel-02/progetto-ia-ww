@@ -1,9 +1,12 @@
 package org.example.Game.mode;
 
 import org.example.Game.gameManager.Board;
+import org.example.Game.mode.ai.PlayerAi;
+import org.example.Game.mode.manual.PlayerManual;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public abstract class Player {
     protected final char symbol;
@@ -20,6 +23,16 @@ public abstract class Player {
         this.Units = new ArrayList<>();
     }
 
+    protected Player(Player player) {
+        this.symbol = player.symbol;
+        this.playerCode = player.playerCode;
+        this.Units = new ArrayList<>();
+        for (Unit u : player.Units) {
+            this.Units.add(new Unit(u));
+        }
+    }
+
+    abstract public Player copy() ;
     public char getSymbol() {
         return symbol;
     }

@@ -15,6 +15,9 @@ public class WondevWomanHandler extends MyHandler{
             throw new RuntimeException(e);
         }
     }
+    public WondevWomanHandler(WondevWomanHandler handler){
+        super(handler);
+    }
 
     @Override
     public void startSync() {

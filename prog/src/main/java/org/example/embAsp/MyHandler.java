@@ -28,6 +28,7 @@ public class MyHandler {
     private Handler handler;
 
     private final ASPInputProgram facts =  new ASPInputProgram();
+    private int factKey = 0;
     private ASPInputProgram enconding = new ASPInputProgram();
 
     
@@ -40,6 +41,13 @@ public class MyHandler {
     public MyHandler(){
         initEmbAsp();
         option = new OptionDescriptor("-n 0");
+    }
+
+    public MyHandler(MyHandler handler){
+        //MAKE A COPY OF THE HANDLER
+        initEmbAsp();
+        setFactProgram(handler.facts);
+        setEncoding(handler.enconding);
     }
 
     public MyHandler(String encodingPath){
@@ -55,7 +63,7 @@ public class MyHandler {
         }
         service = new DLV2DesktopService(REL_PATH_TO_DLV2);
         handler = new DesktopHandler(service);
-        handler.addProgram(facts);
+        factKey= handler.addProgram(facts);
         handler.addProgram(enconding);
     }
 
@@ -124,10 +132,10 @@ public class MyHandler {
         String symConst = "[a-zA-Z]+";
         Pattern predicate = Pattern.compile(symConst);
         // fact(1)
-        String intOrSymConst = "(\\d|[a-zA-Z]+)";
+        String intOrSymConst = "(-?\\d+|[a-zA-Z]+)";
         Pattern atom1 = Pattern.compile(predicate.pattern() + "\\("+ intOrSymConst + "\\)" );
         // fact(1,...)  
-        String intOrSymConst_comma = "((\\d|[a-zA-Z]+),)+";
+        String intOrSymConst_comma = "((-?\\d+|[a-zA-Z]+),)+";
         Pattern atomN = Pattern.compile(predicate.pattern() + 
                         "\\(" + intOrSymConst_comma + intOrSymConst + "\\)" );
         
@@ -203,18 +211,20 @@ public class MyHandler {
     public void startSync() {
         if (enconding.getFilesPaths().isEmpty() && enconding.getPrograms().isEmpty())
             throw new RuntimeException("Encoding not found, please add encoding");
+        handler.getInputProgram(factKey).setPrograms(facts.getPrograms());
 
         output = handler.startSync();
         System.out.println("\n");
 
         if (! output.getErrors().isEmpty())
             throw new RuntimeException("Errors in output: "+ output.getErrors());
-        if (isIncoherent())
-            throw new RuntimeException("Incoherent output");
+        if (isIncoherent()){
+            throw new RuntimeException("Incoherent output ");
+        }
         if (isSafetyError())
             throw new RuntimeException("Safety error " + output.getOutput());
 
-        facts.clearAll();
+
     }
 
 
@@ -244,7 +254,7 @@ public class MyHandler {
         return ((AnswerSets) output).getAnswersets();
     }
 
-    public List<AnswerSet> getOptimalAnswerSet(){
+    public List<AnswerSet> getOptimalAnswerSets(){
         if(getAnswerSets().getOptimalAnswerSets().isEmpty())
             throw new RuntimeException("AnswerSets list is empty: " );
 

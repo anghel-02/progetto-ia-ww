@@ -33,6 +33,7 @@ public class GameHandler {
     //TODO: cambiare sti parametri
     //!!!Actually works only for single unit per player
     public static void runAI(int groupID1, int groupID2) throws Exception {
+    //--CREATE PLAYERS
         char [] symbols = Input.startInput();
         players = new PlayerAi[Board.N_PLAYERS];
         players[0] = new PlayerAi(symbols[0], 0, groupID1);
@@ -71,7 +72,9 @@ public class GameHandler {
 
     //--THREADS
         ExecutorService executorService=Executors.newFixedThreadPool(2);
+
         try {
+    //--GAMELOOP
             while (! board.Win()){
                 for (Player p : players) {
                     actionSet action = executorService.submit((PlayerAi) p).get();
@@ -157,7 +160,6 @@ public class GameHandler {
 
 
     private static synchronized void playTurn(actionSet action) throws Exception {
-        System.out.print( action.display());
     //--WIN CONDITION -> can not make action
         if (action.isNullAction()){
             board.setWin();
@@ -165,6 +167,7 @@ public class GameHandler {
             return;
         }
 
+        System.out.print( action.display());
     //--MOVE AND BUILD
         //TODO: RIMUOVERE IF AL TERMINE DELLA FASE DI SVILUPPO O COMUNQUE NON SERVONO PIU
         if(! board.moveUnitSafe(action.unit(), action.move()))

@@ -3,13 +3,10 @@ package org.example.Game.mode.ai;
 
 
 import it.unical.mat.embasp.languages.asp.ASPInputProgram;
-import it.unical.mat.embasp.languages.asp.AnswerSet;
 import org.example.Game.mode.Player;
-import org.example.Game.mode.Unit;
 import org.example.Settings;
 import org.example.embAsp.*;
 
-import java.awt.*;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
@@ -25,7 +22,6 @@ import java.util.stream.Stream;
 public class PlayerAi extends Player implements Callable<actionSet> {
     private final ArrayList<ASPInputProgram> encodings;
     private final WondevWomanHandler handler;
-    private final ASPInputProgram myFacts;
     private static final ASPInputProgram gridState = new ASPInputProgram();
 
     private final String encPath;
@@ -65,15 +61,29 @@ public class PlayerAi extends Player implements Callable<actionSet> {
 
         handler = new WondevWomanHandler();
         encodings = new ArrayList<>();
-        myFacts = new ASPInputProgram();
 
         addFilesFromFolder();
 
     }
 
+    public PlayerAi(PlayerAi player){
+        //MAKING A COPY OF THE PLAYER
+        super(player);
+        encPath = player.encPath;
+        embAspPath = player.embAspPath;
+        embAspPackage = player.embAspPackage;
+        handler = new WondevWomanHandler(player.getHandler());
+        encodings = player.getEncodings();
+        myGroup = player.myGroup;
+
+    }
+
+
+    @Override
+    public Player copy() {
+        return new PlayerAi(this);
+    }
 //--GETTERS AND SETTERS--------------------------------------------------------------------------------------------------
-
-
     public ArrayList<ASPInputProgram> getEncodings() {
         return encodings;
     }
@@ -121,37 +131,38 @@ public class PlayerAi extends Player implements Callable<actionSet> {
     @Override
     public actionSet call() throws Exception {
         handler.setFactProgram(gridState);
-        return makeAction(myGroup.embAspSetting(this));
+        return myGroup.callEmbAsp(this);
     }
 
 
     //Actually works only for single unit per player
-    actionSet makeAction(Unit myUnit) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, InstantiationException {
-        handler.startSync();
-
-
-    //--
-        Point move = null;
-        Point build= null;
-        for (AnswerSet answerSet: handler.getOptimalAnswerSet()) {
-        //--IF CAN'T PERFORM ANY ACTION
-            if (answerSet.getAtoms().isEmpty())
-                return new actionSet(myUnit); //nullAction = true
-
-        //--ELSE
-            for (Object obj :answerSet.getAtoms()){
-                if(obj instanceof moveIn)
-                    move = new Point(((moveIn) obj).getX(), ((moveIn) obj).getY());
-                else if(obj instanceof buildIn)
-                    build = new Point(((buildIn) obj).getX(), ((buildIn) obj).getY());
-
-             }
-        }
-        
-
-
-        return new actionSet( myUnit, move, build);
-    }
+//    actionSet makeAction(Unit myUnit) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, InstantiationException {
+//
+//        handler.startSync();
+//
+//
+//    //--
+//        Point move = null;
+//        Point build= null;
+//        for (AnswerSet answerSet: handler.getOptimalAnswerSets()) {
+//        //--IF CAN'T PERFORM ANY ACTION
+//            if (answerSet.getAnswerSet().isEmpty())
+//                return new actionSet(myUnit); //nullAction = true
+//
+//        //--ELSE
+//            for (Object obj :answerSet.getAtoms()){
+//                if(obj instanceof moveIn)
+//                    move = new Point(((moveIn) obj).getX(), ((moveIn) obj).getY());
+//                else if(obj instanceof buildIn)
+//                    build = new Point(((buildIn) obj).getX(), ((buildIn) obj).getY());
+//
+//             }
+//        }
+//
+//
+//
+//        return new actionSet( myUnit, move, build);
+//    }
 
 //--UTILITY METHODS-----------------------------------------------------------------------------------------------------
 
@@ -212,7 +223,6 @@ public class PlayerAi extends Player implements Callable<actionSet> {
 
 
     }
-
 
 
 }

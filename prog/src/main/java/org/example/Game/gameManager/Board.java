@@ -5,6 +5,7 @@ import org.example.Game.mode.Unit;
 import org.example.embAsp.cell;
 
 import java.awt.Point;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -24,7 +25,7 @@ public class Board {
     public static final int FLOOR_START= FLOOR_HEIGHT_0;
     public static final int FLOOR_REMOVED= FLOOR_HEIGHT_4;
 
-    private final int[][] grid;
+    private int[][] grid;
     private final Player[] players;
 //    private final HashMap<Integer, Point> unitCoord = new HashMap<>(); // unitCode, coord
 
@@ -47,6 +48,12 @@ public class Board {
 //        lock = new Object();
     }
 
+    public static Board copyOf(Board board){
+        Board myBoard= new Board(board.getPlayers());
+        myBoard.grid = board.grid;
+        myBoard.win = board.Win();
+        return myBoard;
+    }
 
 //--GETTERS & SETTERS---------------------------------------------------------------------------------------------------
 
@@ -103,6 +110,9 @@ public class Board {
         }
         return null;
     }
+    private Unit unitAt(Point coord){
+        return unitAt(coord.x,coord.y);
+    }
 
     int playerCodeAt(int x, int y){
         for (Player p : players){
@@ -155,8 +165,6 @@ public class Board {
     }
 
 
-
-
     public int addUnit(int playerCode, Point coord) {
         if(playerCode < 0 || playerCode > N_PLAYERS-1){
             throw new IllegalArgumentException("playerCode must be between 0 and " + (N_PLAYERS-1));
@@ -180,79 +188,25 @@ public class Board {
 
     }
 
-    public boolean canMove(Unit unit, Point coordMove){
-//    A unit may move to any neighboring cell, including diagonals.
-//    The unit may only move on the same level, step up one level or step down any number of levels.
-
-//    After every movement, the unit must be able to build onto an adjacent cell of its new position.
-//    This causes the cell in question to gain 1 unit of height.
-//    If the height reaches level 4, the cell is considered removed from play.
-//    If your unit moves onto a level 3 cell, you win the game.
-
-
-        int currentX = unit.coord().x;
-        int currentY = unit.coord().y;
-        int toMoveX = coordMove.x;
-        int toMoveY = coordMove.y;
-
-        //--A unit cannot move to the same cell it is currently in.
-        if (unit.coord().equals(coordMove)){
-            System.out.println("NOT VALID! same cell");
-            return false;
-        }
-
-        //--A unit cannot move to a cell that is occupied by another unit.
-        if (isOccupied(toMoveX,toMoveY)){
-            System.out.println("NOT VALID! cell occupied");
-            return false;
-        }
-
-        //--A unit may move to any neighboring cell, including diagonals.
-
-        if( Math.abs(toMoveX-currentX)  > 1 || Math.abs(toMoveY-currentY)  > 1){
-            System.out.println("NOT VALID! too far away");
-            return false;
-        }
-
-        //--If the height reaches level 4, the cell is considered removed from play.
-        if (grid[toMoveX][toMoveY] == FLOOR_REMOVED){
-            System.out.println("NOT VALID! floor removed");
-            return false;
-        }
-        //--The unit may only move on the same level, step up one level or step down any number of levels.
-        if (grid[toMoveX][toMoveY] - grid[currentX][currentY] > 1){
-            System.out.println("NOT VALID! floor too high");
-            return false;
-        }
-
-
-        return true;
-
-    }
-
-    public boolean canMove(Unit unit, int x, int y){
-        return canMove(unit, new Point(x,y));
-    }
-
-
-
     /**
      * Move a unit to a new position. <p>
      * @param unit
      * @param coord
      * @return
      */
+
+//--ACTIONS-------------------------------------------------------------------------------------------------------------
     public boolean moveUnitSafe(Unit unit , Point coord){
         if (canMove(unit,coord)){
             players[unit.player().getPlayerCode()].moveUnitSafe(unit,coord);
 
             //--WIN
-            if (grid[coord.x][coord.y] == FLOOR_HEIGHT_3){
-                win = true;
-            }
+            if (grid[coord.x][coord.y] == FLOOR_HEIGHT_3)
+                setWin();
 
             return true;
         }
+
         return false;
     }
 
@@ -267,41 +221,6 @@ public class Board {
         return moveUnitSafe(unit, new Point(x,y));
     }
 
-
-    public boolean canBuild(Unit unit , Point coordBuild) {
-        int currentX = unit.coord().x;
-        int currentY = unit.coord().y;
-        int toBuildX = coordBuild.x;
-        int toBuildY = coordBuild.y;
-
-        //--A unit cannot build to the same cell it is currently in.
-        if (unit.coord().equals(coordBuild)){
-            System.out.println("NOT VALID! same cell");
-            return false;
-        }
-
-        //--A unit cannot build to a cell that is occupied by another unit.
-        if (isOccupied(coordBuild)){
-            System.out.println("NOT VALID! cell occupied");
-            return false;
-        }
-
-        //--A unit may build to any neighboring cell, including diagonals.
-        if( Math.abs(toBuildX-currentX)  > 1 || Math.abs(toBuildY-currentY)  > 1){
-            System.out.println("NOT VALID! too far away");
-            return false;
-        }
-
-        //--If the height reaches level 4, the cell is considered removed from play.
-        if (grid[toBuildX][toBuildY] == FLOOR_REMOVED){
-            System.out.println("NOT VALID! floor removed");
-            return false;
-        }
-
-
-        return true;
-    }
-
     public boolean buildFloor(Unit unit, Point coord) {
         if (canBuild(unit, coord)){
             grid[coord.x][coord.y]++;
@@ -311,52 +230,148 @@ public class Board {
 
     }
 
+    public boolean canMove(Point unitCoord, Point toMove){
+//    The unit may only move on the same level, step up one level or step down any number of levels.
+//    After every movement, the unit must be able to build onto an adjacent cell of its new position.
+//    This causes the cell in question to gain 1 unit of height.
+//    If the height reaches level 4, the cell is considered removed from play.
+//    If your unit moves onto a level 3 cell, you win the game.
 
+        if (! canMethods(unitCoord, toMove)) return false;
 
-    public boolean isPlayable(Point coord){
-        if (coord.x < 0 || coord.x >= ROW_SIZE || coord.y < 0 || coord.y >= COL_SIZE)
+        //The unit may only move on the same level, step up one level or step down any number of levels.
+        if (grid[toMove.x][toMove.y] - grid[unitCoord.x][unitCoord.y] > 1){
+            System.out.println("NOT VALID! floor too high");
             return false;
-        return grid[coord.x][coord.y] != FLOOR_REMOVED;
+        }
+
+        return true;
+
+    }
+    public boolean canMove(Unit unit, Point coord){
+        return canMove(unit.coord(),coord);
     }
 
+    private boolean canMethods(Point start, Point end){
+
+        int currentX = start.x;
+        int currentY = start.y;
+        int toX = end.x;
+        int toY = end.y;
+
+        //--Can't make action outside the grid
+        if (toX < 0 || toX >= ROW_SIZE || toY< 0 || toY >= COL_SIZE)
+            return false;
+
+        //--A unit cannot make action to the same cell it is currently in.
+        if (start.equals(end)){
+            System.out.println("NOT VALID! same cell");
+            return false;
+        }
+
+        //--Can make action to any neighboring cell, including diagonals.
+        if( Math.abs(toX -currentX)  > 1 || Math.abs(toY-currentY)  > 1){
+            System.out.println("NOT VALID! too far away");
+            return false;
+        }
+
+        //--A unit cannot make action to a cell that is occupied by another unit.
+        if (isOccupied(toX,toY)){
+            System.out.println("NOT VALID! cell occupied");
+            return false;
+        }
+
+        //--If the height reaches level 4, the cell is considered removed from play.
+        if (grid[toX][toY] == FLOOR_REMOVED){
+            System.out.println("NOT VALID! floor removed");
+            return false;
+        }
+
+        return true;
+    }
+
+
+    private boolean canBuild(Point unitCoord, Point toBuild){
+        return canMethods(unitCoord,toBuild);
+    }
+    public boolean canBuild(Unit unit , Point coord) {
+        return canBuild(unit.coord(),coord);
+    }
+
+
+
+
+//--EMBASP
+
     /**
-     * Get the playable area for a unit. <p>
-     *  A unit may move to any neighboring cell, including diagonals.
-     * @param unit
+     * Get the area around a cell where a unit can legally move. <p>
+     * @param unitCoord the cell where the unit is
      * @return
      */
-    public ArrayList<Point> playableArea(Unit unit){
-        int x = unit.coord().x;
-        int y = unit.coord().y;
+    public ArrayList<Point> moveableArea(Point unitCoord){
         ArrayList<Point> area = new ArrayList<>(8);
-        //--A unit may move to any neighboring cell, including diagonals.
-        // up
-        Point up = new Point(x,y-1);
-        if(isPlayable(up)) area.add(up);
-        // up right
-        Point upRight = new Point(x+1,y-1);
-        if(isPlayable(upRight)) area.add(upRight);
-        // right
-        Point right = new Point(x+1,y);
-        if(isPlayable(right)) area.add(right);
-        // down right
-        Point downRight = new Point(x+1,y+1);
-        if(isPlayable(downRight)) area.add(downRight);
-        // down
-        Point down = new Point(x,y+1);
-        if(isPlayable(down)) area.add(down);
-        // down left
-        Point downLeft = new Point(x-1,y+1);
-        if(isPlayable(downLeft)) area.add(downLeft);
-        // left
-        Point left = new Point(x-1,y);
-        if(isPlayable(left)) area.add(left);
-        // up left
-        Point upLeft = new Point(x-1,y-1);
-
+        initArea(area,unitCoord);
+        area.removeIf(toMove -> ! canMove(unitCoord,toMove));
 
 
         return area;
+    }
+
+    /**
+     * Get the area around a cell where a unit can legally move. <p>
+     * @param unit
+     * @return
+     */
+    public ArrayList<Point> moveableArea(Unit unit){
+        return moveableArea(unit.coord());
+    }
+
+
+    /**
+     * Get the area around a cell where a unit can legally Build. <p>
+     * @param unitCoord the cell where the unit is
+     * @return
+     */
+    public ArrayList<Point> buildableArea(Point unitCoord){
+        ArrayList<Point> area = new ArrayList<>(8);
+        initArea(area,unitCoord);
+        area.removeIf(toBuild -> ! canBuild(unitCoord,toBuild));
+
+        return area;
+    }
+
+    /**
+     * Get the area around a cell where a unit can legally Build. <p>
+     * @param unit
+     * @return
+     */
+    public ArrayList<Point> buildableArea(Unit unit){
+        return buildableArea(unit.coord());
+    }
+
+
+
+    private void initArea( ArrayList<Point> area, Point coord){
+        int x = coord.x;
+        int y = coord.y;
+
+        // up
+        area.add(new Point(x,y-1));
+        // up right
+        area.add(new Point(x+1,y-1));
+        // right
+        area.add( new Point(x+1,y));
+        // down right
+        area.add( new Point(x+1,y+1));
+        // down
+        area.add(new Point(x,y+1));
+        // down left
+        area.add( new Point(x-1,y+1));
+        // left
+        area.add(new Point(x-1,y));
+        // up left
+        area.add(new Point(x-1,y-1));
+
     }
 
 
