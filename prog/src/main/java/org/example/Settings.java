@@ -12,7 +12,7 @@ public interface Settings {
     String PATH_EMBASP_GROUP3 = "prog/src/main/java/org/example/embAsp/gruppo_3";
     String PATH_EMBASP_GROUP4 = "prog/src/main/java/org/example/embAsp/gruppo_4";
 
-    String PACKAGE_EMBASP_GROUP1 = "org.example.embAsp.gruppo_1.";
+    String PACKAGE_EMBASP_GROUP1 = "org.example.embAsp.gruppo_1";
     String PACKAGE_EMBASP_GROUP2 = "org.example.embAsp.gruppo_2";
     String PACKAGE_EMBASP_GROUP3 = "org.example.embAsp.gruppo_3";
     String PACKAGE_EMBASP_GROUP4 = "org.example.embAsp.gruppo_4";

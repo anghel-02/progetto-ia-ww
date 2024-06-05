@@ -207,7 +207,7 @@ public class PlayerAi extends Player implements Callable<actionSet> {
                     URLClassLoader loader = new URLClassLoader(urls);
                     String className = path.getFileName().toString().replace(".java", "");
 
-                    Class<?> clazz = Class.forName(embAspPackage +className, true, loader);
+                    Class<?> clazz = Class.forName(embAspPackage +"."+className, true, loader);
                     if (Group.class.isAssignableFrom(clazz)){
                         myGroup = (Group) clazz.getDeclaredConstructor().newInstance();
                         paths.close();

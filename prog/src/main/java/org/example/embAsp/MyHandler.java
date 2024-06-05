@@ -263,7 +263,6 @@ public class MyHandler {
     public List<AnswerSet> getOptimalAnswerSets(){
         if(getAnswerSets().getOptimalAnswerSets().isEmpty())
             throw new RuntimeException("AnswerSets list is empty: " );
-
         return ((AnswerSets) output).getOptimalAnswerSets();
     }
 

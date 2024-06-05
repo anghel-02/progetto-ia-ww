@@ -80,7 +80,7 @@ public class GameHandler {
                     actionSet action = executorService.submit((PlayerAi) p).get();
                     playTurn(action);
 
-//                    Thread.sleep(500);
+                    Thread.sleep(500);
 
                 }
 
@@ -214,10 +214,10 @@ public class GameHandler {
      */
 
     //TODO: rimuovere dopo sviluppo
-    public static void testAiBruteForce() throws Exception {
+    public static void testAiBruteForce(int groupID1, int groupID2) throws Exception {
         char [] symbols = {'a','b'};
-        PlayerAi player1= new PlayerAi(symbols[0], 0, PlayerAi.GROUP_1);
-        PlayerAi player2 = new PlayerAi(symbols[1], 1 , PlayerAi.GROUP_1);
+        PlayerAi player1= new PlayerAi(symbols[0], 0, groupID1);
+        PlayerAi player2 = new PlayerAi(symbols[1], 1 , groupID2);
         initGame(player1,player2);
         refreshGridState();
 
@@ -235,7 +235,7 @@ public class GameHandler {
 
 
                     if (board.Win()){
-                        testAiBruteForce();
+                        testAiBruteForce(groupID1, groupID2);
                         return;
                     }
 

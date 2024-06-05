@@ -16,7 +16,7 @@ public class Main {
 
 //!!!!!TEST AI con BRUTE FORCE, DA TOGLIERE
 //COMMENTARE SE NON SI VUOLE ESEGUIRE TEST
-//        GameHandler.testAiBruteForce();
+        GameHandler.testAiBruteForce(PlayerAi.GROUP_1, PlayerAi.GROUP_2);
 
 
     //--

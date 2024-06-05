@@ -1,4 +1,4 @@
-package org.example.embAsp.gruppo_1;
+package org.example.embAsp.gruppo_2;
 
 import org.example.Game.gameManager.Board;
 import org.example.Game.gameManager.GameHandler;
@@ -16,7 +16,7 @@ import java.awt.*;
 import java.util.ArrayList;
 
 
-public class Group1 implements Group {
+public class PiuStupido implements Group {
     private Board myBoard;
     private PlayerAi myPlayer;
     private WondevWomanHandler myHandler;
@@ -27,7 +27,7 @@ public class Group1 implements Group {
      * Use a copy of the board and the player to avoid any modification.<p>
      * After the computation, the method will return the actionSet to be executed.
      * @param player
-     * @returns
+     * @return
      * @throws Exception
      */
     public actionSet callEmbAsp(PlayerAi player) throws Exception {
@@ -38,10 +38,10 @@ public class Group1 implements Group {
 
         myHandler = myPlayer.getHandler();
 
-    //--CHOSE UNIT
+        //--CHOSE UNIT
         myUnit = myPlayer.getFirstUnit();
 
-    //--MOVE
+        //--MOVE
         Point move = makeMove();
         if(move == null)
             return new NullAction(myUnit);
@@ -49,7 +49,7 @@ public class Group1 implements Group {
         if (! myBoard.moveUnitSafe(myUnit, move))
             throw new RuntimeException("SOMETHING WRONG, CANNOT MOVE IN GROUP");
 
-    //--BUILD
+        //--BUILD
         Point build = makeBuild();
 
         if(build == null)
@@ -59,29 +59,26 @@ public class Group1 implements Group {
     }
 
     private Point makeMove() throws Exception {
-    //TODO: CAMBIARE METODO SCELTA ENCODING, MOLTO VULNERBILE USANDO INDICI
+        //TODO: CAMBIARE METODO SCELTA ENCODING, MOLTO VULNERBILE USANDO INDICI
         myPlayer.chooseEncoding(1);
 
 
-    //--CAN'T MOVE
+        //--CAN'T MOVE
         //moveCell(X,Y). --> cell where I can move unit
         ArrayList<Point> moveableArea = myBoard.moveableArea(myUnit);
         if (moveableArea.isEmpty()) {
             return null;
         }
 
-    //--CAN MOVE
+        //--CAN MOVE
         for (Point cell : moveableArea)
             myHandler.addFactAsString("moveCell(" + cell.x + "," + cell.y + ")");
 
         myHandler.startSync();
         //ADDING FACTS
-        for (Object atom : myHandler.getOptimalAnswerSets().getFirst().getAtoms()) {
-            if (atom instanceof moveIn){
-                Point moveIn = new Point(((moveIn) atom).getX(), ((moveIn) atom).getY());
-                testOptimalMove(moveIn, myBoard.getGrid(), moveableArea);
-                return moveIn;
-            }
+        for (Object atom : myHandler.getAnswerSetsList().getFirst().getAtoms()) {
+            if (atom instanceof moveIn)
+                return new Point(((moveIn) atom).getX(), ((moveIn) atom).getY());
         }
 
         throw new RuntimeException("Something wrong in makeMove");
@@ -91,14 +88,14 @@ public class Group1 implements Group {
     private Point makeBuild() throws Exception {
         myPlayer.chooseEncoding(0);
 
-    //--CAN'T BUILD
+        //--CAN'T BUILD
         //moveCell(X,Y). --> cell where I can move unit
         ArrayList<Point> buildableArea = myBoard.buildableArea(myUnit);
         if (buildableArea.isEmpty()) {
             return null;
         }
 
-    //--CAN BUILD
+        //--CAN BUILD
         for (Point cell : buildableArea)
             myHandler.addFactAsString("buildCell(" + cell.x + "," + cell.y + ")");
 
@@ -112,26 +109,13 @@ public class Group1 implements Group {
 
         throw new RuntimeException("Something wrong in makeBuild");
     }
-//--TEST-------------------------------------------------------------------------------------------------------------
-    //TODO: ELIMINARE DOPO FASE SVILUPPO
-    //TEST IF UNIT DOESN'T MOVE TO A CELL WITH HEIGHT 3
-    private void testOptimalMove(Point move, int[][] grid, ArrayList<Point> moveAbleArea){
-        if (grid[move.x][move.y] != 3 ){
-            for (Point cell : moveAbleArea)
-                if (grid[cell.x][cell.y] == 3 && ! move.equals(cell))
-                    throw new RuntimeException("TEST FAILED, Move Not Optimal. Group1 move to ("+move.x+","+move.y+")"+" instead of ("+cell.x+","+cell.y+")");
-        }
 
-
-    }
-
-//--
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Group1 group1 = (Group1) o;
-        return myBoard.equals(group1.myBoard) && myPlayer.equals(group1.myPlayer) && myHandler.equals(group1.myHandler) && myUnit.equals(group1.myUnit);
+        PiuStupido that = (PiuStupido) o;
+        return myBoard.equals(that.myBoard) && myPlayer.equals(that.myPlayer) && myHandler.equals(that.myHandler) && myUnit.equals(that.myUnit);
     }
 
 }
