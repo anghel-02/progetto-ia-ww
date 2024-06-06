@@ -1,13 +1,13 @@
 #progetto-ia-ww folder --------------------------------------------------------
 out/
 #prog folder
-#prog/encodings/gruppo_1/
-#prog/encodings/gruppo_2/
+prog/encodings/gruppo_1/
+prog/encodings/gruppo_2/
 prog/encodings/gruppo_3/
 prog/encodings/gruppo_4/
 
-#prog/src/main/java/org/example/embAsp/gruppo_1/
-#prog/src/main/java/org/example/embAsp/gruppo_2/
+prog/src/main/java/org/example/embAsp/gruppo_1/
+prog/src/main/java/org/example/embAsp/gruppo_2/
 prog/src/main/java/org/example/embAsp/gruppo_3/
 prog/src/main/java/org/example/embAsp/gruppo_4/
 

@@ -7,8 +7,8 @@ import org.example.Game.mode.Unit;
 import java.awt.*;
 import java.util.Objects;
 
-@Id("myUnit") //myUnit(X,Y,H,P)
-public class myUnit {
+@Id("unit") //unit(X,Y,H,U,P)
+public class unitASP {
     @Param(0)
     private int x;
     @Param(1)
@@ -20,19 +20,19 @@ public class myUnit {
     @Param(4)
     private int playerCode;
 
-    public myUnit(int x, int y, int height, int unitCode,int playerCode) {
+    public unitASP(int x, int y, int height, int unitCode, int playerCode) {
 
         init(x, y, height, unitCode, playerCode);
     }
-    public myUnit(Point coord, int height ,int unitCode, int playerCode ) {
+    public unitASP(Point coord, int height , int unitCode, int playerCode ) {
 
         init(coord.x, coord.y, height, unitCode, playerCode);
     }
 
-    public myUnit(Unit unit, int height) {
+    public unitASP(Unit unit, int height) {
         init(unit.coord().x, unit.coord().y,height, unit.unitCode() , unit.player().getPlayerCode() );
     }
-    public myUnit() {
+    public unitASP() {
 
     }
 
@@ -87,7 +87,7 @@ public class myUnit {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        myUnit that = (myUnit) o;
+        unitASP that = (unitASP) o;
         return x == that.x && y == that.y && height == that.height && unitCode== that.unitCode && playerCode == that.playerCode ;
     }
 
