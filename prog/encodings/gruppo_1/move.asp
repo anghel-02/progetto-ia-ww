@@ -28,16 +28,9 @@ moveIn(X,Y) | moveOut(X,Y) :- moveCell(X,Y,_).
 
 
 % prefer moving on higher cell
-:~ moveIn(X,Y), moveCell(X,Y,H), myUnit(_,_,Hmy,_,_), H<=Hmy. [1@9]
-
-
-% prefer moving to a height 2 cell if the cell is near an height 3 ->
-nearMoveCell(X,Y,H):- cell(X,Y,H,_), moveCell(X2,Y2,_), offset(Off), X = X2+Off, Y = Y2+Off.
-:~ moveIn(X,Y), nearMe(X2,Y2,2), X<>X2, Y<>Y2 . [1@9]
-
-
-
-
+:~ moveIn(X,Y), moveCell(X,Y,H), myUnit(_,_,Hmy,_,_), H=Hmy. [1@8]
+:~ moveIn(X,Y), moveCell(X,Y,H), myUnit(_,_,Hmy,_,_), H=Hmy-1. [1@8]
+:~ moveIn(X,Y), moveCell(X,Y,H), myUnit(_,_,Hmy,_,_), H=Hmy-2. [1@8]
 
 % nearMe(X,Y,H):- cell(X,Y,H,_), myUnit(XMy,YMy,_), offset(Off), X = XMy+Off, Y = YMy+Off.
 
