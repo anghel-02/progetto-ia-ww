@@ -19,6 +19,7 @@ public class Main {
         GameHandler.testAiBruteForce(PlayerAi.GROUP_1, PlayerAi.GROUP_2);
 
 
+
     //--
         System.out.println("Inserire 0 per eseguire il codice in manuale, 1 per eseguire il codice con AI");
 

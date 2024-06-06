@@ -16,26 +16,31 @@ public class myUnit {
     @Param(2)
     private int height;
     @Param(3)
+    private int unitCode;
+    @Param(4)
     private int playerCode;
 
-    public myUnit(int x, int y, int height, int playerCode) {
-        init(x, y, height, playerCode);
+    public myUnit(int x, int y, int height, int unitCode,int playerCode) {
+
+        init(x, y, height, unitCode, playerCode);
     }
-    public myUnit(Point coord, int height , int playerCode) {
-         init(coord.x, coord.y, height, playerCode);
+    public myUnit(Point coord, int height ,int unitCode, int playerCode ) {
+
+        init(coord.x, coord.y, height, unitCode, playerCode);
     }
 
     public myUnit(Unit unit, int height) {
-        init(unit.coord().x, unit.coord().y,height, unit.player().getPlayerCode() );
+        init(unit.coord().x, unit.coord().y,height, unit.unitCode() , unit.player().getPlayerCode() );
     }
     public myUnit() {
 
     }
 
-    private void init(int x, int y, int height, int playerCode) {
+    private void init(int x, int y, int height, int unitCode, int playerCode) {
         this.x = x;
         this.y = y;
         this.height = height;
+        this.unitCode = unitCode;
         this.playerCode = playerCode;
     }
 //--GETTERS AND SETTERS-------------------------------------------------------------------------------------------------
@@ -54,13 +59,6 @@ public class myUnit {
     }
 
 
-    public int getPlayerCode() {
-        return playerCode;
-    }
-    public void setPlayerCode(int playerCode) {
-        this.playerCode = playerCode;
-    }
-
     public int getHeight() {
         return height;
     }
@@ -68,13 +66,29 @@ public class myUnit {
         this.height = height;
     }
 
+    public int getUnitCode() {
+        return unitCode;
+    }
+
+    public void setUnitCode(int unitCode) {
+        this.unitCode = unitCode;
+    }
+
+    public int getPlayerCode() {
+        return playerCode;
+    }
+    public void setPlayerCode(int playerCode) {
+        this.playerCode = playerCode;
+    }
+
+
     //--UTILITIES-----------------------------------------------------------------------------------------------------------
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        myUnit myUnit = (myUnit) o;
-        return x == myUnit.x && y == myUnit.y && height == myUnit.height && playerCode == myUnit.playerCode ;
+        myUnit that = (myUnit) o;
+        return x == that.x && y == that.y && height == that.height && unitCode== that.unitCode && playerCode == that.playerCode ;
     }
 
     @Override
@@ -88,6 +102,7 @@ public class myUnit {
                 x +
                 "," + y +
                 "," + height +
+                "," + unitCode +
                 "," + playerCode +
                 ") ";
     }

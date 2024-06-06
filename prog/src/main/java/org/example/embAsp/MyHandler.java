@@ -29,34 +29,32 @@ public class MyHandler {
 
     private final ASPInputProgram facts =  new ASPInputProgram();
     private int factKey = 0;
-    private ASPInputProgram enconding = new ASPInputProgram();
+    private final ASPInputProgram enconding = new ASPInputProgram();
 
 
-    private Output output=null;
+    private Output output;
     private OptionDescriptor option;
-    private Integer OPTION_ID_n0 = null ;
+    private Integer OPTION_ID_n0 ;
 
 //-----------------CONSTRUCTOR----------------------------------------
 
     public MyHandler(){
         initEmbAsp();
-        option = new OptionDescriptor("-n 0");
     }
 
     public MyHandler(MyHandler handler){
         //MAKE A COPY OF THE HANDLER
-        initEmbAsp();
         setFactProgram(handler.facts);
         setEncoding(handler.enconding);
         if (! handler.option.getOptions().isEmpty())
             option = new OptionDescriptor(handler.option.getOptions());
 
+        initEmbAsp();
 
     }
 
     public MyHandler(String encodingPath){
         initEmbAsp();
-        option = new OptionDescriptor("-n 0");
         addEncodingPath(encodingPath);
     }
 
@@ -69,6 +67,9 @@ public class MyHandler {
         handler = new DesktopHandler(service);
         factKey= handler.addProgram(facts);
         handler.addProgram(enconding);
+
+        option=new OptionDescriptor("-n0");
+        output=null;
     }
 
 //--GETTERS & SETTERS---------------------------------------------------------------------------------------------------
@@ -250,6 +251,9 @@ public class MyHandler {
     public AnswerSets getAnswerSets(){
         if (output == null)
             throw new RuntimeException("Output is null, maybe startSync methods was never launched");
+        if (isEmpty())
+            throw new RuntimeException("AnswerSets is empty ");
+
         return (AnswerSets) output;
     }
 
@@ -261,30 +265,35 @@ public class MyHandler {
     }
 
     public List<AnswerSet> getOptimalAnswerSets(){
-        if(getAnswerSets().getOptimalAnswerSets().isEmpty())
-            throw new RuntimeException("AnswerSets list is empty: " );
+        outputNullExep();
+
         return ((AnswerSets) output).getOptimalAnswerSets();
     }
 
     private boolean isIncoherent(){
-        if (output == null)
-            throw new RuntimeException("Output is null, maybe startSync methods was never launched");
+        outputNullExep();
+
         return output.getOutput().matches("DLV 2.1.2\n" +
                 "\n" +
                 "INCOHERENT\n");
     }
 
     private boolean isSafetyError(){
-        if (output == null)
-            throw new RuntimeException("Output is null, maybe startSync methods was never launched");
+        outputNullExep();
+
         return output.getOutput().contains("--> Safety Error");
     }
 
     private boolean isEmpty(){
-        if (output == null)
-            throw new RuntimeException("Output is null, maybe startSync methods was never launched");
+        outputNullExep();
+
         return ((AnswerSets)output).getAnswersets().isEmpty();
     }
 
+//--EXEPTIONS-----------------------------------------------------------------------------------------------------------
+    private void outputNullExep(){
+        if (output == null)
+            throw new RuntimeException("Output is null, maybe startSync methods was never launched");
+    }
 
 }

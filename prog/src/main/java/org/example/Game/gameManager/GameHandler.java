@@ -75,10 +75,13 @@ public class GameHandler {
 
         try {
     //--GAMELOOP
-            while (! board.Win()){
+            while (! board.win()){
                 for (Player p : board.getPlayers()) {
                     actionSet action = executorService.submit((PlayerAi) p).get();
                     playTurn(action);
+
+                    if (board.win())
+                        break;
 
                     Thread.sleep(500);
 
@@ -120,7 +123,7 @@ public class GameHandler {
                     board.display();
 
                 //--EXIT
-                    if (board.Win()){
+                    if (board.win()){
                         return;
                     }
                 }
@@ -183,7 +186,7 @@ public class GameHandler {
         board.display();
 
     //--WIN CONDITION -> unit on height 3
-        if (board.Win()){
+        if (board.win()){
             for (int i = 0; i < 50; i++) {
                 System.out.print("*");
             }
@@ -215,42 +218,40 @@ public class GameHandler {
 
     //TODO: rimuovere dopo sviluppo
     public static void testAiBruteForce(int groupID1, int groupID2) throws Exception {
-        char [] symbols = {'a','b'};
-        PlayerAi player1= new PlayerAi(symbols[0], 0, groupID1);
-        PlayerAi player2 = new PlayerAi(symbols[1], 1 , groupID2);
-        initGame(player1,player2);
-        refreshGridState();
+        while (true) {
+            char[] symbols = {'a', 'b'};
+            PlayerAi player1 = new PlayerAi(symbols[0], 0, groupID1);
+            PlayerAi player2 = new PlayerAi(symbols[1], 1, groupID2);
+            initGame(player1, player2);
+            refreshGridState();
 
 
-        System.out.print("\n\nSPAWN UNITS");
-        board.display();
+            System.out.print("\n\nSPAWN UNITS");
+            board.display();
 
-    //--THREADS
-        ExecutorService executorService=Executors.newFixedThreadPool(2);
-        try {
-            while (true){
-                for (Player p : board.getPlayers()) {
-                    actionSet action = executorService.submit((PlayerAi) p).get();
-                    playTurn(action);
+            //--THREADS
+            ExecutorService executorService = Executors.newFixedThreadPool(2);
+            try {
+                while (!board.win()) {
+                    for (Player p : board.getPlayers()) {
+                        actionSet action = executorService.submit((PlayerAi) p).get();
+                        playTurn(action);
+                        if (board.win())
+                            break;
 
-
-                    if (board.Win()){
-                        testAiBruteForce(groupID1, groupID2);
-                        return;
+//                        Thread.sleep(500);
                     }
-
-//                    Thread.sleep(500);
 
                 }
 
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            } finally {
+                executorService.shutdown();
             }
-
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        } finally {
-            executorService.shutdown();
         }
     }
+
 
 
 

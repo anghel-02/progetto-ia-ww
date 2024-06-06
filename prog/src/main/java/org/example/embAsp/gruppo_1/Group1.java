@@ -1,5 +1,6 @@
 package org.example.embAsp.gruppo_1;
 
+import it.unical.mat.embasp.languages.asp.ASPInputProgram;
 import org.example.Game.gameManager.Board;
 import org.example.Game.gameManager.GameHandler;
 import org.example.Game.mode.Player;
@@ -7,10 +8,7 @@ import org.example.Game.mode.Unit;
 import org.example.Game.mode.ai.NullAction;
 import org.example.Game.mode.ai.PlayerAi;
 import org.example.Game.mode.ai.actionSet;
-import org.example.embAsp.Group;
-import org.example.embAsp.WondevWomanHandler;
-import org.example.embAsp.buildIn;
-import org.example.embAsp.moveIn;
+import org.example.embAsp.*;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -32,22 +30,29 @@ public class Group1 implements Group {
      */
     public actionSet callEmbAsp(PlayerAi player) throws Exception {
         myBoard = GameHandler.getBoard().copy();
-        for (Player p : myBoard.getPlayers())
-            if (player.getPlayerCode() == p.getPlayerCode())
-                myPlayer = (PlayerAi) p;
-
-        myHandler = myPlayer.getHandler();
+        myPlayer = (PlayerAi) myBoard.getPlayers()[player.getPlayerCode()];
+    //--SETTING HANDLER
+        myHandler = new WondevWomanHandler(player.getHandler());
 
     //--CHOSE UNIT
         myUnit = myPlayer.getFirstUnit();
+        //TODO: implementare height nella classe myUnit
+        myHandler.addFactAsObject(new myUnit(myUnit, myBoard.heightAt(myUnit.coord())));
 
     //--MOVE
         Point move = makeMove();
+
+
         if(move == null)
             return new NullAction(myUnit);
-
+        //MOVE IN BOARD
         if (! myBoard.moveUnitSafe(myUnit, move))
-            throw new RuntimeException("SOMETHING WRONG, CANNOT MOVE IN GROUP");
+            throw new RuntimeException("SOMETHING WRONG, CANNOT MOVE unit "+myUnit.unitCode()+" IN GROUP. "+
+                    "("+myUnit.coord().x+","+myUnit.coord().y+")"+
+                    "-->"+ "("+move.x +","+ move.y+")");
+
+        //REFRESH FACTS
+        refreshGridState();
 
     //--BUILD
         Point build = makeBuild();
@@ -60,7 +65,7 @@ public class Group1 implements Group {
 
     private Point makeMove() throws Exception {
     //TODO: CAMBIARE METODO SCELTA ENCODING, MOLTO VULNERBILE USANDO INDICI
-        myPlayer.chooseEncoding(1);
+        myHandler.setEncoding(myPlayer.getEncodings().get(1));
 
 
     //--CAN'T MOVE
@@ -72,7 +77,9 @@ public class Group1 implements Group {
 
     //--CAN MOVE
         for (Point cell : moveableArea)
-            myHandler.addFactAsString("moveCell(" + cell.x + "," + cell.y + ")");
+            myHandler.addFactAsString("moveCell(" + cell.x + "," + cell.y +","+ myBoard.heightAt(cell) +")");
+
+//
 
         myHandler.startSync();
         //ADDING FACTS
@@ -89,7 +96,7 @@ public class Group1 implements Group {
 
     //TODO: ATTENZIONE I FATTI AGGIUNTI DA MOVE NON VENGONO CANCELLATI, MA PER ORA NON VANNO IN CONFLITTO
     private Point makeBuild() throws Exception {
-        myPlayer.chooseEncoding(0);
+        myHandler.setEncoding(myPlayer.getEncodings().getFirst());
 
     //--CAN'T BUILD
         //moveCell(X,Y). --> cell where I can move unit
@@ -100,10 +107,10 @@ public class Group1 implements Group {
 
     //--CAN BUILD
         for (Point cell : buildableArea)
-            myHandler.addFactAsString("buildCell(" + cell.x + "," + cell.y + ")");
+            myHandler.addFactAsString("buildCell(" + cell.x + "," + cell.y + "," + myBoard.heightAt(cell)+ ")");
 
         myHandler.startSync();
-
+//        System.out.println(myHandler.getFactsString());
         //ADDING FACTS
         for (Object atom : myHandler.getAnswerSetsList().getFirst().getAtoms()) {
             if (atom instanceof buildIn)
@@ -112,14 +119,34 @@ public class Group1 implements Group {
 
         throw new RuntimeException("Something wrong in makeBuild");
     }
-//--TEST-------------------------------------------------------------------------------------------------------------
+
+
+//--UTILITY-------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Refresh facts in myHandler without calling PlayerAi.refreshGridstate().
+     */
+    private void refreshGridState() throws Exception {
+        ASPInputProgram myGridState = new ASPInputProgram();
+        int [][] grid = myBoard.getGrid();
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[i].length; j++) {
+                myGridState.addObjectInput((new cell(i, j, grid[i][j], myBoard.playerCodeAt(i, j))));
+            }
+        }
+        myHandler.setFactProgram(myGridState);
+        myHandler.addFactAsObject(new myUnit(myUnit, myBoard.heightAt(myUnit.coord())));
+    }
+
+//--TEST----------------------------------------------------------------------------------------------------------------
     //TODO: ELIMINARE DOPO FASE SVILUPPO
     //TEST IF UNIT DOESN'T MOVE TO A CELL WITH HEIGHT 3
     private void testOptimalMove(Point move, int[][] grid, ArrayList<Point> moveAbleArea){
         if (grid[move.x][move.y] != 3 ){
             for (Point cell : moveAbleArea)
                 if (grid[cell.x][cell.y] == 3 && ! move.equals(cell))
-                    throw new RuntimeException("TEST FAILED, Move Not Optimal. Group1 move to ("+move.x+","+move.y+")"+" instead of ("+cell.x+","+cell.y+")");
+                    throw new RuntimeException("TEST FAILED, Move Not Optimal. Group1 move to ("+move.x+","+move.y+")"+
+                            " instead of ("+cell.x+","+cell.y+")");
         }
 
 

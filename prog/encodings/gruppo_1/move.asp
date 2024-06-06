@@ -4,20 +4,38 @@
 
 %%FACTS - added from Group.java
 %cell(X,Y,H,P). --> a cell of the grid --> X,Y are the coordinates of the cell, H is the height of the cell, P is the player code that is in the cellgrid (-1 if no player)
-%moveCell(X,Y). --> cell where I can move unit 
+%moveCell(X,Y,H). --> cell where I can move unit 
+%myUnit(X,Y,H,U,P) --> represent the choosed unit. X,Y coordinates |H height |U unitCode | P playerCode  
+
 
 %%AUXILIARY
+offset(-1..1). % used to calculate near cells
 
 %%GUESS
-moveIn(X,Y) | moveOut(X,Y) :- moveCell(X,Y).
+moveIn(X,Y) | moveOut(X,Y) :- moveCell(X,Y,_).
 
 %%CHECK
 % can choose only one cell
 :- #count{X,Y : moveIn(X,Y)} <> 1.
 
 
-%%WEAK
-% prefer to move to a height 3 cell -> penalty for moving to a height != 3
-%:~ moveIn(X,Y), cell(X,Y,H,_), H<>3. [1@1, X, Y]
-:~ moveIn(X,Y), cell(X,Y,H,_), H<>1. [1@1, X, Y]
+%%WEAK - 10 (max priority)
+
+% prefer moving to an height 3 cell -> penalty for moving to a height != 3
+:~ moveIn(X,Y), moveCell(X,Y,H), H<>3. [1@10]
+% :~ moveIn(X,Y), moveCell(X,Y,H), H=3. [0@10, X,Y]  %there is a case in wich without this -> no optimum
+
+% prefer moving on higher cell
+:~ moveIn(X,Y), moveCell(X,Y,H), myUnit(_,_,Hmy,_,_), H<=Hmy. [1@9]
+
+
+% prefer moving to a height 2 cell if the cell is near an height 3 ->
+% nearMoveCell(X,Y,H):- cell(X,Y,H,_), moveCell(X2,Y2,_), offset(Off), X = X2+Off, Y = Y2+Off.
+% :~ moveIn(X,Y), nearMe(X2,Y2,2), X<>X2, Y<>Y2 . [1@9]
+
+
+
+
+
+% nearMe(X,Y,H):- cell(X,Y,H,_), myUnit(XMy,YMy,_), offset(Off), X = XMy+Off, Y = YMy+Off.
 

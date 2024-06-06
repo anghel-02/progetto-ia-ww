@@ -26,15 +26,16 @@ public class Board {
     public static final int FLOOR_REMOVED= FLOOR_HEIGHT_4;
 
     private final int[][] grid;
-    private final Player[] players = new Player[N_PLAYERS];;
+    private final Player[] players ;
 //    private final HashMap<Integer, Point> unitCoord = new HashMap<>(); // unitCode, coord
 
     //    private final Object lock;
-    private boolean win = false;
+    private boolean win ;
 
     //--CONSTRUCTOR---------------------------------------------------------------------------------------------------------
     Board(Player player1, Player player2) {
         grid = new int[ROW_SIZE][COL_SIZE];
+        players = new Player [N_PLAYERS];
         this.players[0] = player1.copy();
         this.players[1] = player2.copy();
 
@@ -44,10 +45,10 @@ public class Board {
             }
         }
 
-//        lock = new Object();
+        win=false;
     }
 
-    public Board copy(){
+public Board copy(){
         Board myBoard = new Board(players[0],players[1]);
         myBoard.setGrid(grid);
         myBoard.win = win;
@@ -75,7 +76,7 @@ public class Board {
         return players;
     }
 
-    public boolean Win() {
+    public boolean win() {
         return win;
     }
     public void setWin() {
@@ -119,7 +120,7 @@ public class Board {
         return unitAt(coord.x,coord.y);
     }
 
-    int playerCodeAt(int x, int y){
+    public int playerCodeAt(int x, int y){
         for (Player p : players){
             if ( p.isUnit(x,y))
                 return p.getPlayerCode();
@@ -132,7 +133,7 @@ public class Board {
         return heightAt(coord.x,coord.y);
     }
 
-    int heightAt(int x, int y){
+    public int heightAt(int x, int y){
         return grid[x][y];
     }
 
