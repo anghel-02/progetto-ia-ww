@@ -1,7 +1,7 @@
 package org.example;
 
 public interface Settings {
-    String PATH_TO_DLV2 = "prog/lib/dlv2.exe";
+    String PATH_TO_DLV2 = "prog/lib/dlv2";
 
     String PATH_ENCOD_GROUP1 = "prog/encodings/gruppo_1";
     String PATH_ENCOD_GROUP2 = "prog/encodings/gruppo_2";
