@@ -20,6 +20,8 @@ moveIn(X,Y) | moveOut(X,Y) :- moveCell(X,Y,_).
 
 
 %%WEAK - 10 (max priority)
+% need this to always get an optimal answerset
+:~ moveIn(X,Y).[0@10]
 
 % prefer moving to an height 3 cell -> penalty for moving to a height != 3
 :~ moveIn(X,Y), moveCell(X,Y,H), H<>3. [1@10]

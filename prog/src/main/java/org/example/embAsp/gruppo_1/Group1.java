@@ -112,7 +112,7 @@ public class Group1 implements Group {
         myHandler.startSync();
 //        System.out.println(myHandler.getFactsString());
         //ADDING FACTS
-        for (Object atom : myHandler.getAnswerSetsList().getFirst().getAtoms()) {
+        for (Object atom : myHandler.getOptimalAnswerSets().getFirst().getAtoms()) {
             if (atom instanceof buildIn)
                 return new Point(((buildIn) atom).getX(), ((buildIn) atom).getY());
         }
