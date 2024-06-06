@@ -1,5 +1,6 @@
 package org.example.embAsp.gruppo_2;
 
+import it.unical.mat.embasp.languages.asp.ASPInputProgram;
 import org.example.Game.gameManager.Board;
 import org.example.Game.gameManager.GameHandler;
 import org.example.Game.mode.Player;
@@ -7,6 +8,7 @@ import org.example.Game.mode.Unit;
 import org.example.Game.mode.ai.NullAction;
 import org.example.Game.mode.ai.PlayerAi;
 import org.example.Game.mode.ai.actionSet;
+import org.example.Settings;
 import org.example.embAsp.Group;
 import org.example.embAsp.WondevWomanHandler;
 import org.example.embAsp.buildIn;
@@ -60,7 +62,10 @@ public class PiuStupido implements Group {
 
     private Point makeMove() throws Exception {
         //TODO: CAMBIARE METODO SCELTA ENCODING, MOLTO VULNERBILE USANDO INDICI
-        myPlayer.chooseEncoding(1);
+      //  myPlayer.chooseEncoding(1);
+        ASPInputProgram moveProgram = new ASPInputProgram();
+        moveProgram.addFilesPath(Settings.PATH_ENCOD_GROUP2+ "/moveStupida.asp");
+        myHandler.setEncoding(moveProgram);
 
 
         //--CAN'T MOVE
@@ -86,7 +91,9 @@ public class PiuStupido implements Group {
 
     //TODO: ATTENZIONE I FATTI AGGIUNTI DA MOVE NON VENGONO CANCELLATI, MA PER ORA NON VANNO IN CONFLITTO
     private Point makeBuild() throws Exception {
-        myPlayer.chooseEncoding(0);
+        ASPInputProgram moveProgram = new ASPInputProgram();
+        moveProgram.addFilesPath(Settings.PATH_ENCOD_GROUP2+ "/buildStupida.asp");
+        myHandler.setEncoding(moveProgram);
 
         //--CAN'T BUILD
         //moveCell(X,Y). --> cell where I can move unit

@@ -8,6 +8,7 @@ import org.example.Game.mode.Unit;
 import org.example.Game.mode.ai.NullAction;
 import org.example.Game.mode.ai.PlayerAi;
 import org.example.Game.mode.ai.actionSet;
+import org.example.Settings;
 import org.example.embAsp.*;
 
 import java.awt.*;
@@ -65,7 +66,11 @@ public class Group1 implements Group {
 
     private Point makeMove() throws Exception {
     //TODO: CAMBIARE METODO SCELTA ENCODING, MOLTO VULNERBILE USANDO INDICI
-        myHandler.setEncoding(myPlayer.getEncodings().get(1));
+
+//        myHandler.setEncoding(myPlayer.getEncodings().get(0)); linux bastardo
+        ASPInputProgram moveProgram = new ASPInputProgram();
+        moveProgram.addFilesPath(Settings.PATH_ENCOD_GROUP1+ "/move.asp");
+        myHandler.setEncoding(moveProgram);
 
 
     //--CAN'T MOVE
@@ -96,8 +101,10 @@ public class Group1 implements Group {
 
     //TODO: ATTENZIONE I FATTI AGGIUNTI DA MOVE NON VENGONO CANCELLATI, MA PER ORA NON VANNO IN CONFLITTO
     private Point makeBuild() throws Exception {
-        myHandler.setEncoding(myPlayer.getEncodings().getFirst());
-
+//        myHandler.setEncoding(myPlayer.getEncodings().get(1)); linux
+        ASPInputProgram buildProgram = new ASPInputProgram();
+        buildProgram.addFilesPath(Settings.PATH_ENCOD_GROUP1+ "/build.asp");
+        myHandler.setEncoding(buildProgram);
     //--CAN'T BUILD
         //moveCell(X,Y). --> cell where I can move unit
         ArrayList<Point> buildableArea = myBoard.buildableArea(myUnit);
