@@ -131,10 +131,7 @@ public class Group1 implements Group {
         for (Point cell : buildableArea)
             myHandler.addFactAsString("buildCell(" + cell.x + "," + cell.y + "," + myBoard.heightAt(cell)+ ")");
 
-        //enemyMoveCell(X,Y,H,U).
-        for (Unit enemyUnit : enemyPlayer.getUnits() )
-            for (Point cell : myBoard.moveableArea(enemyUnit))
-                myHandler.addFactAsString("enemyMoveCell("+ cell.x+","+cell.y+","+ myBoard.heightAt(cell)+","+enemyUnit.unitCode()+")");
+
 
 
 
@@ -185,6 +182,11 @@ public class Group1 implements Group {
 
         //choosedUnit(U)
         myHandler.addFactAsString("choosedUnit("+myUnit.unitCode()+")");
+
+        //enemyMoveCell(X,Y,H,U).
+        for (Unit enemyUnit : enemyPlayer.getUnits() )
+            for (Point cell : myBoard.moveableArea(enemyUnit))
+                myHandler.addFactAsString("enemyMoveCell("+ cell.x+","+cell.y+","+ myBoard.heightAt(cell)+","+enemyUnit.unitCode()+")");
     }
 
 //--TEST----------------------------------------------------------------------------------------------------------------

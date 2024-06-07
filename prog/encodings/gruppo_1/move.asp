@@ -7,12 +7,16 @@
 % unit(X,Y,H,U,P). --> represent a unit. X,Y coordinates |H height |U unitCode | P playerCode
 % choosedUnit(U). --> in case of 2 units per player.
 % moveCell(X,Y,H). --> cell where I can move unit 
-% 
+% enemyMoveCell(X,Y,H,U).
+
+offset(-1..1).
+
 
 %%AUXILIARY
 myUnit(X,Y,H,U):- unit(X,Y,H,U,_), choosedUnit(U). 
 friendUnit(X,Y,H,U):- unit(X,Y,H,U,P), player(P).
 enemyUnit(X,Y,H,U):- unit(X,Y,H,U,Penemy), player(P), Penemy<>P.
+validCell(X,Y,H,P) :-cell(X,Y,H,P), H<>4.
 
 %%GUESS
 moveIn(X,Y) | moveOut(X,Y) :- moveCell(X,Y,_).
@@ -37,27 +41,21 @@ maxPriority(10).
 %
 % 1
 %
-% prefer not moving away from a (not moveable) height 3 cell if the enemy can move to it
-% enemyUnit(X,Y,H) :- cell(X,Y,H,P), myPlayer(MyP), P <> -1, P <> MyP.
-% nearEnemy(X,Y,H) :- cell(X,Y,H,_), enemyUnit(XEnemy,YEnemy,_), offset(OffX), offset(OffY), X = XEnemy + OffX, Y = YEnemy + OffY.
-% :- nearEnemy(X,Y,_), enemyUnit(X,Y,_).
+% prefer not moving away from a (not moveable for myUnit) height 3 cell if the enemy can move to it
+nearEnemyMoveCell3(SX,SY,X,Y) :- enemyMoveCell(X,Y,3,U), offset(OffX), &sum(X,OffX;SX), offset(OffY), &sum(Y,OffY;SY), not enemyMoveCell(SX,SY,3,U).
 
+:~ moveIn(X,Y), nearEnemyMoveCell3(X2,Y2,_,_), X<>X2,  maxPriority(MAX).  [1@MAX-1]   % penalty if move to a cell where myUnit can't build on enemyMoveCell(X,Y,3,_)  
+:~ moveIn(X,Y), nearEnemyMoveCell3(X2,Y2,_,_), Y<>Y2,  maxPriority(MAX).  [1@MAX-1]   % penalty if move to a cell where myUnit can't build on enemyMoveCell(X,Y,3,_)  
 
-% :~ moveIn(X,Y), nearEnemy(X2,Y2,3), offset(OffX), offset(OffY),  X > X2 + OffX, Y > Y2+ OffY,  maxPriority(MAX). [1@MAX-1] % penalty if move to a cell where can't build to nearEnemy(X,Y,3)  
-
-%
 % 2
 %
 
-% se il nemico è su una cella di livello 2 o 3, e nel suo vicinato c'è una cella di livello 3,
-% è preferibile spostarti su una cella che faccia sì che tu abbia la cella di liv 3 nel tuo vicinato
 
 % prefer moving to a height 2 cell if the cell is near an height 3 ->
-% nearMoveCell(X,Y,H,X2,Y2):- emptyCell(X,Y,H), moveCell(X2,Y2,_), offset(OffX), offset(OffY), X = X2 + OffX, Y = Y2 + OffY.
-% :- nearMoveCell(X,Y,_,_,_), moveCell(X,Y,_).
+h2_nearMoveCell3(X,Y,X2,Y2):- validCell(X,Y,3,_), moveCell(X2,Y2,H), H=2, offset(OffX), offset(OffY), &sum(X2,OffX;X), &sum(Y2,OffY;Y), not moveCell(X,Y,3).
 
-% :~ moveIn(X,Y), nearMoveCell(X,Y,3,X2,Y2), X<>X2,  maxPriority(MAX). [1@MAX-2] % penalty if exist an height 3 cell near a moveCell and don't move to moveCell  
-% :~ moveIn(X,Y), nearMoveCell(X,Y,3,X2,Y2), Y<>Y2,  maxPriority(MAX). [1@MAX-2] % penalty if exist an height 3 cell near a moveCell and don't move to moveCell  
+:~ moveIn(X,Y), h2_nearMoveCell3(_,_,X2,Y2), X<>X2,  maxPriority(MAX). [1@MAX-2] % penalty if exist an height 3 cell near a moveCell and don't move to moveCell  
+:~ moveIn(X,Y), h2_nearMoveCell3(_,_,X2,Y2), Y<>Y2,  maxPriority(MAX). [1@MAX-2] % penalty if exist an height 3 cell near a moveCell and don't move to moveCell  
 
 %
 %3
@@ -66,8 +64,6 @@ maxPriority(10).
 :~ moveIn(X,Y), moveCell(X,Y,H), myUnit(_,_,Hmy,_), H=Hmy  ,  maxPriority(MAX). [1@MAX-3]
 :~ moveIn(X,Y), moveCell(X,Y,H), myUnit(_,_,Hmy,_), H=Hmy-1,  maxPriority(MAX). [2@MAX-3]
 :~ moveIn(X,Y), moveCell(X,Y,H), myUnit(_,_,Hmy,_), H=Hmy-2,  maxPriority(MAX). [3@MAX-3]
-
-
 
 
 % avvicinarsi al nemico

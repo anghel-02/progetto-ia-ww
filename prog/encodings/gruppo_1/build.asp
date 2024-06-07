@@ -31,14 +31,37 @@ maxPriority(10).
 % need this to always get an optimal answerset
 :~ buildIn(X,Y),  maxPriority(MAX). [0@MAX]
 
-% prefer to build (height 4) on a buildable height 3 cell near the enemy
-:~ buildIn(X,Y), buildCell(X2,Y2,3), enemyMoveCell(X2,Y2,3,_), X <> X2,  maxPriority(MAX). [1@MAX] % penalize if exist a buildAble enemyMoveCell(X,Y,3,_) and don't build on it 
-:~ buildIn(X,Y), buildCell(X2,Y2,3), enemyMoveCell(X2,Y2,3,_), Y <> Y2,  maxPriority(MAX). [1@MAX] % penalize if exist a buildAble enemyMoveCell(X,Y,3,_) and don't build on it 
+% prefer build (height 4) on a buildable height 3 cell near the enemy
+:~ buildIn(X,Y), buildCell(X2,Y2,3), enemyMoveCell(X2,Y2,3,_), X <> X2,  maxPriority(MAX). [2@MAX] % penalize if exist a buildAble enemyMoveCell(X,Y,3,_) and don't build on it 
+:~ buildIn(X,Y), buildCell(X2,Y2,3), enemyMoveCell(X2,Y2,3,_), Y <> Y2,  maxPriority(MAX). [2@MAX] % penalize if exist a buildAble enemyMoveCell(X,Y,3,_) and don't build on it 
+
+% avoid build height 4 near myUnit 
+:~ buildIn(X,Y), buildCell(X2,Y2,3),  maxPriority(MAX). [1@MAX] 
+:~ buildIn(X,Y), buildCell(X2,Y2,3),  maxPriority(MAX). [1@MAX] 
 
 %
 %1
 %
-% prefer to build on cell height equal to my unit cell height
-:~ buildIn(X,Y), buildCell(X,Y,H), myUnit(_,_,Hmy,_), H <> Hmy,  maxPriority(MAX). [1@MAX-1]
+% near enemy preferences
+
+% avoid enemy climbing
+:~ buildIn(X,Y),enemyMoveCell(X,Y,H,_), enemyUnit(_,_,Henemy,_), &sum(H+1,-Henemy;Z), Z=1,  maxPriority(MAX). [3@MAX-1] 
+:~ buildIn(X,Y),enemyMoveCell(X,Y,H,_), enemyUnit(_,_,Henemy,_), &sum(H+1,-Henemy;Z), Z=0,  maxPriority(MAX). [2@MAX-1] 
+:~ buildIn(X,Y),enemyMoveCell(X,Y,H,_), enemyUnit(_,_,Henemy,_), &sum(H+1,-Henemy;Z), Z=2,  maxPriority(MAX). [1@MAX-1] 
+:~ buildIn(X,Y),enemyMoveCell(X,Y,H,_), enemyUnit(_,_,Henemy,_), &sum(H+1,-Henemy;Z), Z=3,  maxPriority(MAX). [0@MAX-1] 
+
+%
+%2
+%
+
+
+
+%
+%3
+%
+% prefer myUnit climbing
+:~ buildIn(X,Y), buildCell(X,Y,H), myUnit(_,_,Hmy,_), &sum(H+1,-Hmy;Z), Z=0,  maxPriority(MAX). [1@MAX-3]
+:~ buildIn(X,Y), buildCell(X,Y,H), myUnit(_,_,Hmy,_), &sum(H+1,-Hmy;Z), Z>1,  maxPriority(MAX). [Z@MAX-3]
+
 
 

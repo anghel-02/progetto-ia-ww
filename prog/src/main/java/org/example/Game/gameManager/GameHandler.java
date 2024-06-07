@@ -239,7 +239,7 @@ public class GameHandler {
                         if (board.win())
                             break;
 
-                        Thread.sleep(2500);
+//                        Thread.sleep(3000);
                     }
 
                 }
