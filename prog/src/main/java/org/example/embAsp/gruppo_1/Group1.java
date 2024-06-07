@@ -109,7 +109,6 @@ public class Group1 implements Group {
         throw new RuntimeException("Something wrong in makeMove");
     }
 
-    //TODO: ATTENZIONE I FATTI AGGIUNTI DA MOVE NON VENGONO CANCELLATI, MA PER ORA NON VANNO IN CONFLITTO
     private Point makeBuild() throws Exception {
         ASPInputProgram buildProgram = new ASPInputProgram();
         buildProgram.addFilesPath(Settings.PATH_ENCOD_GROUP1+ "/build.asp");
@@ -141,7 +140,6 @@ public class Group1 implements Group {
         for (Object atom : myHandler.getOptimalAnswerSets().getFirst().getAtoms()) {
             if (atom instanceof buildIn){
                 Point buildIn = new Point(((buildIn) atom).getX(), ((buildIn) atom).getY());
-//                testOptimalBuild(buildIn, myBoard.getGrid(), buildableArea);
                 return buildIn;
             }
         }
@@ -209,10 +207,6 @@ public class Group1 implements Group {
 
     }
 
-    private void testOptimalBuild(Point build, int[][] grid, ArrayList<Point> buildableArea){
-
-
-    }
 
 //--
     @Override

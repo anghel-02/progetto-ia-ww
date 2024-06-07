@@ -14,7 +14,6 @@ public class Main {
     //--SET PATH TO DLV2
         MyHandler.setRelPathToDLV2(Settings.PATH_TO_DLV2);
 
-//!!!!!TEST AI con BRUTE FORCE, DA TOGLIERE
 //COMMENTARE SE NON SI VUOLE ESEGUIRE TEST
 //        GameHandler.testAiBruteForce(PlayerAi.GROUP_3, PlayerAi.GROUP_1);
 
@@ -44,7 +43,6 @@ public class Main {
         int[] groupID = new int[2];
 
         System.out.println("Scegliere quali gruppi si scontreranno tra {1-2-3-4}");
-        //TODO: implementare check su scelta gruppi
 
         System.out.print("Gruppo: ");
         String group= sc.next();

@@ -17,7 +17,6 @@ import java.util.concurrent.Executors;
 /**
  * Static class used to handle the game board.
  */
-//TODO: cambiare sta classe in singleton
 public class GameHandler {
     public static final int RUN_MODE_MANUAL = 0;
     public static final int RUN_MODE_AI = 1;
@@ -31,7 +30,6 @@ public class GameHandler {
         return board;
     }
 
-    //TODO: cambiare sti parametri
     //!!!Actually works only for single unit per player
     public static void runAI(int groupID1, int groupID2) throws Exception {
     //--CREATE PLAYERS
@@ -216,7 +214,6 @@ public class GameHandler {
      * @throws Exception
      */
 
-    //TODO: rimuovere dopo sviluppo
     public static void testAiBruteForce(int groupID1, int groupID2) throws Exception {
         while (true) {
             char[] symbols = {'a', 'b'};
