@@ -170,25 +170,26 @@ public class GameHandler {
 
         System.out.print( action.display());
     //--MOVE AND BUILD
-        //TODO: RIMUOVERE IF AL TERMINE DELLA FASE DI SVILUPPO O COMUNQUE NON SERVONO PIU
         if(! board.moveUnitSafe(action.unit(), action.move())) {
-
-            //LA TUA AI SI E' FATTA UNO SPINIELLO BRO
             throw new RuntimeException("Invalid move " + action.move() + " for unit " + action.unit().unitCode());
 
         }
         if (! board.buildFloor(action.unit(),action.build()))
-            //LA TUA AI SI E' FATTA PIU' DI UNO SPINIELLO BRO
-
             throw new RuntimeException("Invalid build "+ action.build() + " for unit "+ action.unit().unitCode());
 
+        System.out.println();
+        for (int i = 0; i < 5*5; i++) {
+            System.out.print("*");
+        }
+
         board.display();
+        for (int i = 0; i < 5*5; i++) {
+            System.out.print("*");
+        }
+        System.out.println();
 
     //--WIN CONDITION -> unit on height 3
         if (board.win()){
-            for (int i = 0; i < 50; i++) {
-                System.out.print("*");
-            }
             System.out.println("\nPLAYER "+ action.unit().player().getSymbol() + " WINS!");
             return;
         }
