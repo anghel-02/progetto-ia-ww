@@ -23,21 +23,20 @@ buildIn(X,Y) | buildOut(X,Y) :- buildCell(X,Y,_).
 :- #count{X,Y : buildIn(X,Y)} <> 1.
 
 % WEAK -10 
-maxPriority(10).
 
 %
 %0
 %
 % need this to always get an optimal answerset
-:~ buildIn(X,Y),  maxPriority(MAX). [0@MAX]
+:~ buildIn(X,Y). [0@10]
 
 % prefer build (height 4) on a buildable height 3 cell near the enemy
-:~ buildIn(X,Y), buildCell(X2,Y2,3), enemyMoveCell(X2,Y2,3,_), X <> X2,  maxPriority(MAX). [2@MAX] % penalize if exist a buildAble enemyMoveCell(X,Y,3,_) and don't build on it 
-:~ buildIn(X,Y), buildCell(X2,Y2,3), enemyMoveCell(X2,Y2,3,_), Y <> Y2,  maxPriority(MAX). [2@MAX] % penalize if exist a buildAble enemyMoveCell(X,Y,3,_) and don't build on it 
+:~ buildIn(X,Y), buildCell(X2,Y2,3), enemyMoveCell(X2,Y2,3,_), X <> X2,  maxPriority(MAX). [2@9] % penalize if exist a buildAble enemyMoveCell(X,Y,3,_) and don't build on it 
+:~ buildIn(X,Y), buildCell(X2,Y2,3), enemyMoveCell(X2,Y2,3,_), Y <> Y2,  maxPriority(MAX). [2@9] % penalize if exist a buildAble enemyMoveCell(X,Y,3,_) and don't build on it 
 
 % avoid build height 4 near myUnit 
-:~ buildIn(X,Y), buildCell(X2,Y2,3),  maxPriority(MAX). [1@MAX] 
-:~ buildIn(X,Y), buildCell(X2,Y2,3),  maxPriority(MAX). [1@MAX] 
+:~ buildIn(X,Y), buildCell(X2,Y2,3),  maxPriority(MAX). [1@8] 
+:~ buildIn(X,Y), buildCell(X2,Y2,3),  maxPriority(MAX). [1@8] 
 
 %
 %1
@@ -45,10 +44,10 @@ maxPriority(10).
 % near enemy preferences
 
 % avoid enemy climbing
-:~ buildIn(X,Y),enemyMoveCell(X,Y,H,_), enemyUnit(_,_,Henemy,_), &sum(H+1,-Henemy;Z), Z=1,  maxPriority(MAX). [3@MAX-1] 
-:~ buildIn(X,Y),enemyMoveCell(X,Y,H,_), enemyUnit(_,_,Henemy,_), &sum(H+1,-Henemy;Z), Z=0,  maxPriority(MAX). [2@MAX-1] 
-:~ buildIn(X,Y),enemyMoveCell(X,Y,H,_), enemyUnit(_,_,Henemy,_), &sum(H+1,-Henemy;Z), Z=2,  maxPriority(MAX). [1@MAX-1] 
-:~ buildIn(X,Y),enemyMoveCell(X,Y,H,_), enemyUnit(_,_,Henemy,_), &sum(H+1,-Henemy;Z), Z=3,  maxPriority(MAX). [0@MAX-1] 
+:~ buildIn(X,Y),enemyMoveCell(X,Y,H,_), enemyUnit(_,_,Henemy,_), &sum(H+1,-Henemy;Z), Z=1,  maxPriority(MAX). [3@7] 
+:~ buildIn(X,Y),enemyMoveCell(X,Y,H,_), enemyUnit(_,_,Henemy,_), &sum(H+1,-Henemy;Z), Z=0,  maxPriority(MAX). [2@7] 
+:~ buildIn(X,Y),enemyMoveCell(X,Y,H,_), enemyUnit(_,_,Henemy,_), &sum(H+1,-Henemy;Z), Z=2,  maxPriority(MAX). [1@7] 
+:~ buildIn(X,Y),enemyMoveCell(X,Y,H,_), enemyUnit(_,_,Henemy,_), &sum(H+1,-Henemy;Z), Z=3,  maxPriority(MAX). [0@7] 
 
 %
 %2
