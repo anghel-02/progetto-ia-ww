@@ -1,14 +1,5 @@
 griglia 5x5 
-4 giocatori
-1 movimento/spingi , 1 piazzo blocco
-stato piastrella 0-4
-4 pieno
-blocco occupato non si puo alzare
-mov. 1 blocco ogni dit.
-spingi 1 blocco ogni dir.
-cella libera solo se non avv. , non 4
-se spingi rimani sulla cella
-se spinto muovi verso la direzione dalla quale sei stato spinto
+
 
 ///////////////////////////////////////////////////////
 DAL LINK
